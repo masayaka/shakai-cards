@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>社会 暗記カード</title>
+<style>
+  :root{
+    --ink:#13241c; --paper:#f3efe4; --moss:#2f6b4f; --moss-d:#1f4a36;
+    --clay:#c2602f; --gold:#caa54b; --line:#d6cfbd; --aji:#3a5a8c;
+    --good:#2f6b4f; --again:#b4502a;
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+  html,body{margin:0;height:100%;}
+  body{background:var(--paper);color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
+    display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
+  header{padding:12px 18px 9px;border-bottom:1px solid var(--line);
+    display:flex;align-items:baseline;justify-content:space-between;gap:10px;}
+  header h1{font-size:16px;margin:0;letter-spacing:.04em;font-weight:800;}
+  header h1 span{color:var(--moss);}
+  .counter{font-variant-numeric:tabular-nums;font-size:12px;color:#6a6354;font-weight:700;text-align:right;line-height:1.4;}
+  .progress{height:4px;background:var(--line);}
+  .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--moss),var(--gold));width:0;transition:width .25s;}
+  main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:16px;gap:14px;}
+  .cat{font-size:12px;font-weight:800;letter-spacing:.12em;padding:4px 12px;border-radius:999px;}
+  .cat.jp{background:#e4efe7;color:var(--moss-d);}
+  .cat.aj{background:#e5ecf5;color:var(--aji);}
+  .card{width:100%;max-width:520px;min-height:44dvh;background:#fffdf7;border:1px solid var(--line);
+    border-radius:20px;box-shadow:0 10px 28px rgba(31,74,54,.10);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    text-align:center;padding:30px 24px;cursor:pointer;position:relative;transition:transform .12s;}
+  .card:active{transform:scale(.992);}
+  .qlabel{position:absolute;top:14px;left:18px;font-size:11px;font-weight:800;letter-spacing:.14em;color:#a89f88;}
+  .rank{position:absolute;top:14px;right:16px;font-size:11px;font-weight:800;color:#bcae8f;font-variant-numeric:tabular-nums;}
+  .qtext{font-size:21px;line-height:1.55;font-weight:700;}
+  .atext{font-size:27px;line-height:1.5;font-weight:800;color:var(--moss-d);}
+  .hint{position:absolute;bottom:14px;left:0;right:0;text-align:center;font-size:12px;color:#a89f88;}
+  .controls{width:100%;max-width:520px;display:flex;gap:12px;}
+  .btn{flex:1;border:none;border-radius:14px;padding:16px 10px;font-size:15px;font-weight:800;color:#fff;
+    cursor:pointer;font-family:inherit;letter-spacing:.04em;transition:transform .1s;}
+  .btn:active{transform:translateY(1px);}
+  .btn.again{background:var(--again);} .btn.good{background:var(--good);} .btn.big{background:var(--moss);}
+  .reveal{width:100%;max-width:520px;} .reveal .btn{width:100%;}
+  footer{padding:9px 16px calc(9px + env(safe-area-inset-bottom));border-top:1px solid var(--line);
+    display:flex;justify-content:space-between;align-items:center;gap:8px;}
+  .seg{display:flex;gap:6px;}
+  .chip{font-size:12px;font-weight:700;padding:7px 11px;border-radius:999px;border:1px solid var(--line);
+    background:#fffdf7;color:#5b5444;cursor:pointer;}
+  .chip.on{background:var(--moss);color:#fff;border-color:var(--moss);}
+  .restart{font-size:12px;font-weight:700;color:var(--clay);background:none;border:none;cursor:pointer;text-decoration:underline;}
+  .done{text-align:center;max-width:520px;padding:0 6px;}
+  .done h2{font-size:23px;margin:.2em 0;color:var(--moss-d);}
+  .done p{color:#6a6354;font-size:14px;line-height:1.7;}
+  .mini{font-size:11px;color:#9a917c;margin-top:2px;}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;}}
+</style>
+</head>
+<body>
+<header>
+  <h1>社会 <span>暗記カード</span></h1>
+  <div class="counter" id="counter">―</div>
+</header>
+<div class="progress"><i id="bar"></i></div>
+
+<main id="main">
+  <div class="cat jp" id="cat">―</div>
+  <div class="card" id="card" role="button" tabindex="0" aria-label="カードをめくる">
+    <div class="qlabel" id="face">とい</div>
+    <div class="rank" id="rank"></div>
+    <div class="qtext" id="text">読み込み中…</div>
+    <div class="hint" id="hint">タップで答え</div>
+  </div>
+  <div class="reveal" id="revealWrap"><button class="btn big" id="revealBtn">答えを見る</button></div>
+  <div class="controls" id="judgeWrap" style="display:none">
+    <button class="btn again" id="againBtn">まちがえた</button>
+    <button class="btn good" id="goodBtn">できた</button>
+  </div>
+</main>
+
+<footer>
+  <div class="seg">
+    <button class="chip on" data-f="all">ぜんぶ</button>
+    <button class="chip" data-f="日本の地形">地形</button>
+    <button class="chip" data-f="アジア">アジア</button>
+  </div>
+  <button class="restart" id="restart">記録リセット</button>
+</footer>
+
+<script>
+const ALL = [{"cat": "日本の地形", "q": "日本列島が属する、火山活動や地震が活発な地域を何というか。", "a": "変動帯", "id": 0}, {"cat": "日本の地形", "q": "日本列島は、何という地域の変動帯に属するか。", "a": "環太平洋地域", "id": 1}, {"cat": "日本の地形", "q": "日本の陸地の約何分の何が、山地・丘陵地か。", "a": "約4分の3", "id": 2}, {"cat": "日本の地形", "q": "日本の陸地の約4分の3をしめる地形は何か。", "a": "山地・丘陵地", "id": 3}, {"cat": "日本の地形", "q": "本州中央部の飛驒・木曽・赤石山脈をまとめて何と呼ぶか。", "a": "日本アルプス", "id": 4}, {"cat": "日本の地形", "q": "日本アルプスをつくる3つの山脈を答えよ。", "a": "飛驒山脈・木曽山脈・赤石山脈", "id": 5}, {"cat": "日本の地形", "q": "日本アルプスの東側にある、地形の大きな境目を何というか。", "a": "フォッサマグナ", "id": 6}, {"cat": "日本の地形", "q": "日本の川は、外国の川に比べて長さが短く、流れがどうか。", "a": "急(急流)", "id": 7}, {"cat": "日本の地形", "q": "日本の川は、流域面積が広いか、せまいか。", "a": "せまい", "id": 8}, {"cat": "日本の地形", "q": "海に面した平らな土地を何というか。", "a": "平野", "id": 9}, {"cat": "日本の地形", "q": "内陸の、山に囲まれた平地を何というか。", "a": "盆地", "id": 10}, {"cat": "日本の地形", "q": "川が山から平地に出たところに土砂が積もってできた地形を何というか。", "a": "扇状地", "id": 11}, {"cat": "日本の地形", "q": "川が海や湖に出る河口に土砂が積もってできた地形を何というか。", "a": "三角州", "id": 12}, {"cat": "日本の地形", "q": "日本一長い川は何か。", "a": "信濃川", "id": 13}, {"cat": "日本の地形", "q": "流域面積が日本一広い川は何か。", "a": "利根川", "id": 14}, {"cat": "日本の地形", "q": "北海道を流れ、石狩平野をつくる川は何か。", "a": "石狩川", "id": 15}, {"cat": "日本の地形", "q": "信濃川がつくる平野は何か。", "a": "越後平野", "id": 16}, {"cat": "日本の地形", "q": "利根川がつくる平野は何か。", "a": "関東平野", "id": 17}, {"cat": "日本の地形", "q": "木曽川がつくる平野は何か。", "a": "濃尾平野", "id": 18}, {"cat": "日本の地形", "q": "筑後川がつくる平野は何か。", "a": "筑紫平野", "id": 19}, {"cat": "日本の地形", "q": "砂浜海岸に発達する、砂が積もった地形を何というか。", "a": "砂丘", "id": 20}, {"cat": "日本の地形", "q": "湾と岬が連続する、出入りの複雑な海岸を何というか。", "a": "リアス海岸", "id": 21}, {"cat": "日本の地形", "q": "東北地方の太平洋側にある、リアス海岸で有名な海岸を何というか。", "a": "三陸海岸", "id": 22}, {"cat": "日本の地形", "q": "日本近海にある、深さ約200mまでのなだらかな海底を何というか。", "a": "大陸棚", "id": 23}, {"cat": "日本の地形", "q": "深さ8000mを超えるような、海底の深いみぞを何というか。", "a": "海溝", "id": 24}, {"cat": "日本の地形", "q": "東日本の太平洋沖を流れる暖流を何というか。", "a": "黒潮(日本海流)", "id": 25}, {"cat": "日本の地形", "q": "東日本の太平洋沖を流れる寒流を何というか。", "a": "親潮(千島海流)", "id": 26}, {"cat": "日本の地形", "q": "黒潮の、もう一つの呼び名は。", "a": "日本海流", "id": 27}, {"cat": "日本の地形", "q": "親潮の、もう一つの呼び名は。", "a": "千島海流", "id": 28}, {"cat": "日本の地形", "q": "暖流と寒流がぶつかり、好漁場となるところを何というか。", "a": "潮目", "id": 29}, {"cat": "日本の地形", "q": "日本海側を流れる暖流を何というか。", "a": "対馬海流", "id": 30}, {"cat": "日本の地形", "q": "日本列島は、まわりを海に囲まれた何といえるか。", "a": "島国", "id": 31}, {"cat": "日本の地形", "q": "北海道東部にある台地を何というか。", "a": "根釧台地", "id": 32}, {"cat": "日本の地形", "q": "赤石山脈は、何という3つの山脈のまとまりの1つか。", "a": "日本アルプス", "id": 33}, {"cat": "日本の地形", "q": "日本で火山活動や地震が活発なのは、何に属するからか。", "a": "変動帯", "id": 34}, {"cat": "日本の地形", "q": "リアス海岸は、湾と何が連続する海岸か。", "a": "岬", "id": 35}, {"cat": "日本の地形", "q": "暖流と寒流がぶつかる潮目は、何が豊かでとれる場所か。", "a": "魚(好漁場)", "id": 36}, {"cat": "日本の地形", "q": "扇状地・三角州のうち、川の河口にできるのはどちらか。", "a": "三角州", "id": 37}, {"cat": "日本の地形", "q": "扇状地・三角州のうち、山から平地へ出たところにできるのはどちらか。", "a": "扇状地", "id": 38}, {"cat": "アジア", "q": "アジアには熱帯〜寒帯、乾燥気候まであり、何がそろっているといえるか。", "a": "世界の気候", "id": 39}, {"cat": "アジア", "q": "日本の年間降水量の平均はおよそ何mmか。", "a": "1750mm", "id": 40}, {"cat": "アジア", "q": "世界の年間降水量の平均はおよそ何mmか。", "a": "750mm", "id": 41}, {"cat": "アジア", "q": "東アジア〜南アジアで降水量が多いのは、何の影響か。", "a": "季節風(モンスーン)", "id": 42}, {"cat": "アジア", "q": "季節風をカタカナで何というか。", "a": "モンスーン", "id": 43}, {"cat": "アジア", "q": "降水量が少ないのは、西アジアとどこか。", "a": "内陸", "id": 44}, {"cat": "アジア", "q": "降水量が多い東〜南アジアは、人口が多いか少ないか。", "a": "多い", "id": 45}, {"cat": "アジア", "q": "夏の季節風は、海から陸・陸から海のどちらにふくか。", "a": "海から陸", "id": 46}, {"cat": "アジア", "q": "冬の季節風は、海から陸・陸から海のどちらにふくか。", "a": "陸から海", "id": 47}, {"cat": "アジア", "q": "年降水量2000mmほどの地域で栽培される作物を2つ答えよ。", "a": "カカオ・天然ゴム", "id": 48}, {"cat": "アジア", "q": "年降水量1000mmほどの地域でさかんな農業は何か。", "a": "稲作", "id": 49}, {"cat": "アジア", "q": "年降水量500mmほどの地域でさかんな農業は何か。", "a": "麦・畑作", "id": 50}, {"cat": "アジア", "q": "地震や火山活動がさかんな、山地が連なる帯を何というか。", "a": "造山帯", "id": 51}, {"cat": "アジア", "q": "太平洋を取り囲む造山帯を何というか。", "a": "環太平洋造山帯", "id": 52}, {"cat": "アジア", "q": "ヨーロッパからアジアにのびる造山帯を何というか。", "a": "アルプス・ヒマラヤ造山帯", "id": 53}, {"cat": "アジア", "q": "大陸はもとひとつで、分かれて移動したという説を何というか。", "a": "大陸移動説", "id": 54}, {"cat": "アジア", "q": "大陸移動説を唱えたドイツの学者はだれか。", "a": "ウェゲナー", "id": 55}, {"cat": "アジア", "q": "大陸移動説で、もとひとつだったとされる大陸を何というか。", "a": "パンゲア", "id": 56}, {"cat": "アジア", "q": "パンゲアが分かれた北側の大陸を何というか。", "a": "ローラシア大陸", "id": 57}, {"cat": "アジア", "q": "パンゲアが分かれた南側の大陸を何というか。", "a": "ゴンドワナ大陸", "id": 58}, {"cat": "アジア", "q": "ローラシア大陸から分かれた大陸を2つ答えよ。", "a": "ユーラシア大陸・北アメリカ大陸", "id": 59}, {"cat": "アジア", "q": "ゴンドワナ大陸から分かれた大陸を4つ答えよ。", "a": "アフリカ・南アメリカ・オーストラリア・南極", "id": 60}, {"cat": "アジア", "q": "中国の正式名称を答えよ。", "a": "中華人民共和国", "id": 61}, {"cat": "アジア", "q": "中国の東部(臨海部)は、低地・高地のどちらか。", "a": "低地", "id": 62}, {"cat": "アジア", "q": "中国の西部(内陸部)は、低地・高地のどちらか。", "a": "高地", "id": 63}, {"cat": "アジア", "q": "中国北部を流れる大河を何というか。", "a": "黄河", "id": 64}, {"cat": "アジア", "q": "中国中部を流れる、中国最長の川を何というか。", "a": "長江", "id": 65}, {"cat": "アジア", "q": "中国東部に広がる平原を何というか。", "a": "華北平原", "id": 66}, {"cat": "アジア", "q": "稲作のさかんな、中国内陸部の盆地を何というか。", "a": "スーチョワン盆地(四川盆地)", "id": 67}, {"cat": "アジア", "q": "中国の総人口はおよそ何人か。", "a": "14億人", "id": 68}, {"cat": "アジア", "q": "かつて中国で行われた、子どもの数を制限する政策を何というか。", "a": "ひとりっ子政策", "id": 69}, {"cat": "アジア", "q": "ひとりっ子政策の影響で、現在の中国で不足しているものは。", "a": "労働力", "id": 70}, {"cat": "アジア", "q": "多くの民族からなる国家を何というか。", "a": "多民族国家", "id": 71}, {"cat": "アジア", "q": "中国の人口の約90%を占める民族は何か。", "a": "漢民族", "id": 72}, {"cat": "アジア", "q": "中国でイスラム教を信仰する民族は何族か。", "a": "シンチヤンウイグル族", "id": 73}, {"cat": "アジア", "q": "チベット族やモンゴル族が信仰している宗教は何か。", "a": "チベット仏教", "id": 74}, {"cat": "アジア", "q": "中国の政治を一手に担う政党は何か。", "a": "中国共産党", "id": 75}, {"cat": "アジア", "q": "中国の現在の国家主席はだれか。", "a": "習近平", "id": 76}, {"cat": "アジア", "q": "中国で多く産出され、CO2排出の原因にもなる資源は。", "a": "石炭", "id": 77}, {"cat": "アジア", "q": "2000年頃に急成長した中国が呼ばれるようになった言葉は。", "a": "世界の工場", "id": 78}, {"cat": "アジア", "q": "中国で問題となっている、内陸部と臨海部の差を何というか。", "a": "経済格差", "id": 79}, {"cat": "アジア", "q": "中国の経済格差で、所得が高いのは西部・東部どちらか。", "a": "東部(臨海部)", "id": 80}, {"cat": "アジア", "q": "中国の首都はどこか。", "a": "北京(ペキン)", "id": 81}, {"cat": "アジア", "q": "中国最大の都市はどこか。", "a": "上海(シャンハイ)", "id": 82}, {"cat": "アジア", "q": "イギリスから中国へ返還された都市はどこか。", "a": "香港(ホンコン)", "id": 83}, {"cat": "アジア", "q": "香港がイギリスから中国に返還されたのは何年か。", "a": "1997年 ※ノートは1999年", "id": 84}, {"cat": "アジア", "q": "中国の歴史都市として知られる、かつての都はどこか。", "a": "西安(シーアン)", "id": 85}, {"cat": "アジア", "q": "茶の産地として有名な中国の省はどこか。", "a": "福建省", "id": 86}, {"cat": "アジア", "q": "1年に同じ田で2回米を作ることを何というか。", "a": "二期作", "id": 87}, {"cat": "アジア", "q": "玄武岩からなり、綿花栽培がさかんなインドの高原は。", "a": "デカン高原", "id": 88}, {"cat": "アジア", "q": "ガンジス川が流れ、稲作がさかんなインドの平原は。", "a": "ヒンドスタン平原", "id": 89}, {"cat": "アジア", "q": "ヒンドスタン平原を流れる大河を何というか。", "a": "ガンジス川", "id": 90}, {"cat": "アジア", "q": "インドの南にある島を何というか。", "a": "セイロン島", "id": 91}, {"cat": "アジア", "q": "世界三大洋のうち、インドの南に広がる海洋は。", "a": "インド洋", "id": 92}, {"cat": "アジア", "q": "インド洋以外の世界三大洋を2つ答えよ。", "a": "太平洋・大西洋", "id": 93}, {"cat": "アジア", "q": "古代四大文明の一つがおこり、小麦の産地でもある平原は。", "a": "インダス平原", "id": 94}, {"cat": "アジア", "q": "インドの東、緯度10度付近にある、サイクロンの被害を受ける湾は。", "a": "ベンガル湾", "id": 95}, {"cat": "アジア", "q": "ベンガル湾などでおこる熱帯低気圧を何というか。", "a": "サイクロン", "id": 96}, {"cat": "アジア", "q": "インドの気候に強い影響をあたえるものは何か。", "a": "モンスーン(季節風)", "id": 97}, {"cat": "アジア", "q": "インドの夏の季節風の風向と気候を答えよ。", "a": "南西風・高温多湿", "id": 98}, {"cat": "アジア", "q": "インドの冬の季節風の風向と気候を答えよ。", "a": "北東風・寒冷乾燥", "id": 99}, {"cat": "アジア", "q": "インドで人口の約90%が信仰する多神教の宗教は。", "a": "ヒンズー教", "id": 100}, {"cat": "アジア", "q": "ヒンズー教で食べることが禁止されている肉は。", "a": "牛(牛肉)", "id": 101}, {"cat": "アジア", "q": "インドで人口の約10%が信仰し、アッラーを神とする宗教は。", "a": "イスラム教", "id": 102}, {"cat": "アジア", "q": "イスラム教で食べることが禁止されている肉は。", "a": "豚(豚肉)", "id": 103}, {"cat": "アジア", "q": "ヒンズー教・イスラム教以外のインドの宗教を1つ答えよ。", "a": "シーク教", "id": 104}, {"cat": "アジア", "q": "インドで最も多く使われる公用語は何か。", "a": "ヒンディー語", "id": 105}, {"cat": "アジア", "q": "インド南部で使われる言語を何というか。", "a": "ドラビダ語", "id": 106}, {"cat": "アジア", "q": "インドの古くからの身分制度を何というか。", "a": "カースト制", "id": 107}, {"cat": "アジア", "q": "インドとパキスタンが領有を争っている地方は。", "a": "カシミール地方", "id": 108}, {"cat": "アジア", "q": "スリランカで対立しているのは、仏教徒と何教徒か。", "a": "ヒンズー教徒", "id": 109}, {"cat": "アジア", "q": "綿花の主な産地であるインドの高原は。", "a": "デカン高原", "id": 110}, {"cat": "アジア", "q": "インドで茶の栽培がさかんな北東部の地方は。", "a": "アッサム地方", "id": 111}, {"cat": "アジア", "q": "アッサム地方の茶の中心都市はどこか。", "a": "ダージリン", "id": 112}, {"cat": "アジア", "q": "茶の産地セイロン島は、現在の何という国か。", "a": "スリランカ", "id": 113}, {"cat": "アジア", "q": "インドでさかんな、麻の一種の作物を何というか。", "a": "ジュート(麻)", "id": 114}, {"cat": "アジア", "q": "インドの首都はどこか。", "a": "デリー(ニューデリー)", "id": 115}, {"cat": "アジア", "q": "ITで発展したインド南部の都市はどこか。", "a": "バンガロール", "id": 116}, {"cat": "アジア", "q": "ガンジス川下流にあるインドの都市はどこか。", "a": "コルカタ", "id": 117}, {"cat": "アジア", "q": "パキスタンの首都はどこか。", "a": "イスラマバード", "id": 118}, {"cat": "アジア", "q": "ネパールの首都はどこか。", "a": "カトマンズ", "id": 119}, {"cat": "アジア", "q": "バングラデシュの首都はどこか。", "a": "ダッカ", "id": 120}, {"cat": "アジア", "q": "スリランカの首都はどこか。", "a": "スリジャヤワルダナプラコッテ", "id": 121}, {"cat": "アジア", "q": "朝鮮半島北側の、社会主義国の正式名称は。", "a": "朝鮮民主主義人民共和国", "id": 122}, {"cat": "アジア", "q": "第二次世界大戦が終わったのは何年か。", "a": "1945年", "id": 123}, {"cat": "アジア", "q": "1977〜1983年に起きた、北朝鮮による日本人拉致は何回か。", "a": "12回", "id": 124}, {"cat": "アジア", "q": "北朝鮮が開発したミサイルの名前を1つ答えよ。", "a": "テポドン", "id": 125}, {"cat": "アジア", "q": "1894年に起こり、台湾が日本の植民地となるきっかけの戦争は。", "a": "日清戦争", "id": 126}, {"cat": "アジア", "q": "日清戦争の後、日本の植民地となった地域はどこか。", "a": "台湾", "id": 127}, {"cat": "アジア", "q": "戦後、中国共産党と争った資本主義の政党は何か。", "a": "中国国民党", "id": 128}, {"cat": "アジア", "q": "戦後、中国国民党が台湾に建てた国の名前は。", "a": "中華民国", "id": 129}, {"cat": "アジア", "q": "中国共産党が大陸に建てた国の名前は。", "a": "中華人民共和国", "id": 130}, {"cat": "アジア", "q": "中国共産党は社会主義・資本主義のどちらの立場か。", "a": "社会主義", "id": 131}, {"cat": "アジア", "q": "中国国民党は社会主義・資本主義のどちらの立場か。", "a": "資本主義", "id": 132}, {"cat": "アジア", "q": "1392〜1897年まで続いた朝鮮の王朝を何というか。", "a": "李氏朝鮮", "id": 133}, {"cat": "アジア", "q": "李氏朝鮮に出兵した日本の武将はだれか。", "a": "豊臣秀吉", "id": 134}, {"cat": "アジア", "q": "1894年に起きた、日本と清の戦争を何というか。", "a": "日清戦争", "id": 135}, {"cat": "アジア", "q": "1904年に起きた、日本とロシアの戦争を何というか。", "a": "日露戦争", "id": 136}, {"cat": "アジア", "q": "1910年に日本が韓国を併合したことを何というか。", "a": "日韓併合", "id": 137}, {"cat": "アジア", "q": "1945年の終戦で、朝鮮は何から解放されたか。", "a": "日本の支配(植民地支配)", "id": 138}, {"cat": "アジア", "q": "冷戦体制で、資本主義の立場をとった南側の国は。", "a": "大韓民国", "id": 139}, {"cat": "アジア", "q": "冷戦体制で、社会主義の立場をとった北側の国は。", "a": "朝鮮民主主義人民共和国", "id": 140}, {"cat": "アジア", "q": "1950年に始まった南北朝鮮間の戦争を何というか。", "a": "朝鮮戦争", "id": 141}, {"cat": "アジア", "q": "朝鮮戦争の休戦協定が結ばれたのは何年か。", "a": "1953年 ※ノートは1954年", "id": 142}, {"cat": "アジア", "q": "韓国で1960年にさかんだった工業は何か。", "a": "せんい工業", "id": 143}, {"cat": "アジア", "q": "韓国で1970年に発展した工業を答えよ。", "a": "鉄鋼・造船・自動車", "id": 144}, {"cat": "アジア", "q": "韓国で1990年以降に発展した、半導体やスマホの工業は。", "a": "半導体(電子)工業", "id": 145}, {"cat": "アジア", "q": "韓国の首都はどこか。", "a": "ソウル", "id": 146}, {"cat": "アジア", "q": "韓国第2の都市で、日本の玄関口とされる都市は。", "a": "プサン(釜山)", "id": 147}, {"cat": "アジア", "q": "韓国の民族衣装を何というか。", "a": "チマ・チョゴリ", "id": 148}, {"cat": "アジア", "q": "韓国独自の文字を何というか。", "a": "ハングル文字", "id": 149}, {"cat": "アジア", "q": "発酵させた野菜の韓国料理を何というか。", "a": "キムチ", "id": 150}, {"cat": "アジア", "q": "韓国の伝統的な床暖房を何というか。", "a": "オンドル", "id": 151}, {"cat": "アジア", "q": "米の生産量が世界第1位の国はどこか。", "a": "中国", "id": 152}, {"cat": "アジア", "q": "米の生産量が世界第2位の国はどこか。", "a": "インド", "id": 153}, {"cat": "アジア", "q": "小麦の生産量が世界第1位の国はどこか。", "a": "中国", "id": 154}, {"cat": "アジア", "q": "石炭の産出量が世界第1位(約58%)の国はどこか。", "a": "中国", "id": 155}, {"cat": "アジア", "q": "機械類の輸出額が世界第1位の国はどこか。", "a": "中国", "id": 156}, {"cat": "アジア", "q": "自動車の生産台数が世界第1位の国はどこか。", "a": "中国", "id": 157}, {"cat": "アジア", "q": "産業用ロボットの稼働台数が世界第1位の国はどこか。", "a": "中国", "id": 158}, {"cat": "アジア", "q": "船舶竣工量が世界第1位の国はどこか。", "a": "中国", "id": 159}, {"cat": "アジア", "q": "「世界の工場」と呼ばれる国はどこか。", "a": "中国", "id": 160}, {"cat": "アジア", "q": "デカン高原で栽培がさかんな作物は何か。", "a": "綿花", "id": 161}, {"cat": "アジア", "q": "ヒンドスタン平原でさかんな農業は何か。", "a": "稲作", "id": 162}, {"cat": "アジア", "q": "インダス平原でさかんに作られる作物は何か。", "a": "小麦", "id": 163}, {"cat": "アジア", "q": "牛肉を食べないのは、ヒンズー教・イスラム教どちらか。", "a": "ヒンズー教", "id": 164}, {"cat": "アジア", "q": "豚肉を食べないのは、ヒンズー教・イスラム教どちらか。", "a": "イスラム教", "id": 165}, {"cat": "アジア", "q": "ウェゲナーが唱えたのは何という説か。", "a": "大陸移動説", "id": 166}, {"cat": "アジア", "q": "北京・上海・香港のうち、中国の首都はどれか。", "a": "北京", "id": 167}, {"cat": "アジア", "q": "北京・上海・香港のうち、中国最大の都市はどれか。", "a": "上海", "id": 168}, {"cat": "アジア", "q": "ソウル・プサンのうち、韓国の首都はどれか。", "a": "ソウル", "id": 169}, {"cat": "アジア", "q": "中華人民共和国・中華民国のうち、台湾の国名はどれか。", "a": "中華民国", "id": 170}, {"cat": "アジア", "q": "社会主義国は、大韓民国・北朝鮮のどちらか。", "a": "北朝鮮", "id": 171}, {"cat": "アジア", "q": "資本主義国は、大韓民国・北朝鮮のどちらか。", "a": "大韓民国", "id": 172}, {"cat": "アジア", "q": "日清戦争が起きたのは何年か。", "a": "1894年", "id": 173}, {"cat": "アジア", "q": "日露戦争が起きたのは何年か。", "a": "1904年", "id": 174}, {"cat": "アジア", "q": "日韓併合が行われたのは何年か。", "a": "1910年", "id": 175}, {"cat": "アジア", "q": "朝鮮戦争が始まったのは何年か。", "a": "1950年", "id": 176}, {"cat": "アジア", "q": "アジアのモンスーン地帯にあたるのは、東〜南アジア・西アジアどちらか。", "a": "東〜南アジア", "id": 177}, {"cat": "アジア", "q": "玄武岩でできたインドの高原を何というか。", "a": "デカン高原", "id": 178}, {"cat": "アジア", "q": "古代四大文明がおこったインドの平原は。", "a": "インダス平原", "id": 179}];
+const STEPS = [10,20,40,80,160,320];   // 「だいたい」この問数以内に再出題
+const KEY = "shakai_srs_v1";
+
+let filter="all";
+let state = load();           // { [id]: {rank:int} }  rank=0..5  まちがえたら0
+let queue = [];               // [{id, due}]  due=この通し番号で出す
+let tick = 0;                 // 出題した通し番号
+let session = {done:0};
+
+function load(){ try{ return JSON.parse(localStorage.getItem(KEY))||{}; }catch(e){ return {}; } }
+function save(){ try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){} }
+
+function pool(){ return ALL.filter(c=> filter==="all" || c.cat===filter); }
+function rankOf(id){ return (state[id] && state[id].rank!=null)? state[id].rank : -1; } // -1=未学習
+
+function schedule(id, ok){
+  let r = rankOf(id);
+  if(ok){ r = Math.min(STEPS.length-1, (r<0?0:r)+1); }
+  else  { r = 0; }
+  state[id] = {rank:r};
+  save();
+  // 「だいたい」その間隔：N×(0.6〜1.0)あたりにばらつかせる
+  const N = STEPS[r];
+  const gap = Math.max(2, Math.round(N*(0.6+Math.random()*0.4)));
+  return tick + gap;
+}
+
+function rebuild(){
+  // 学習キューを作る：未学習はランダム順で最初の方に、学習済みは現在の間隔で配置
+  tick=0; queue=[]; session={done:0};
+  const ps = pool();
+  // 未学習（rank -1）を前方に散らす
+  const fresh = ps.filter(c=>rankOf(c.id)<0);
+  const seen  = ps.filter(c=>rankOf(c.id)>=0);
+  shuffle(fresh); shuffle(seen);
+  let t=0;
+  fresh.forEach(c=>{ queue.push({id:c.id, due:t}); t+=1; });
+  // 学習済みは、間隔に応じて散らして入れる（軽い復習）
+  seen.forEach(c=>{ const N=STEPS[rankOf(c.id)]; queue.push({id:c.id, due: t + Math.round(N*(0.3+Math.random()*0.5))}); });
+  render();
+}
+
+function nextCard(){
+  if(queue.length===0) return null;
+  // due が最小のものを選ぶ（同点はそのまま）
+  queue.sort((a,b)=>a.due-b.due);
+  return queue[0];
+}
+function byId(id){ return ALL.find(c=>c.id===id); }
+
+let showing="q", curId=null;
+function render(){
+  const main=document.getElementById('main');
+  if(!document.getElementById('card')){ main.innerHTML = CARDHTML; bindCard(); }
+  const nx = nextCard();
+  if(!nx){ done(); return; }
+  curId = nx.id; const c = byId(curId);
+  document.getElementById('cat').textContent=c.cat;
+  document.getElementById('cat').className="cat "+(c.cat==="アジア"?"aj":"jp");
+  const r=rankOf(curId);
+  document.getElementById('rank').textContent = r<0? "NEW" : "Lv."+(r+1);
+  if(showing==="q"){
+    document.getElementById('face').textContent="とい";
+    document.getElementById('text').textContent=c.q; document.getElementById('text').className="qtext";
+    document.getElementById('hint').style.display="block";
+    document.getElementById('revealWrap').style.display="block";
+    document.getElementById('judgeWrap').style.display="none";
+  }else{
+    document.getElementById('face').textContent="こたえ";
+    document.getElementById('text').textContent=c.a; document.getElementById('text').className="atext";
+    document.getElementById('hint').style.display="none";
+    document.getElementById('revealWrap').style.display="none";
+    document.getElementById('judgeWrap').style.display="flex";
+  }
+  // 進捗：このセットで覚えた（Lv1以上）枚数
+  const ps=pool(); const learned=ps.filter(c=>rankOf(c.id)>=1).length;
+  document.getElementById('counter').innerHTML="覚えた "+learned+" / "+ps.length+"<br>このセッション "+session.done+"枚";
+  document.getElementById('bar').style.width=(ps.length? learned/ps.length*100:0)+"%";
+}
+function reveal(){ showing="a"; render(); }
+function judge(ok){
+  const id=curId;
+  // キューから現在のカードを取り除く
+  queue = queue.filter(q=>q.id!==id);
+  const due = schedule(id, ok);
+  queue.push({id, due});
+  session.done++;
+  showing="q"; tick++;
+  render();
+}
+function done(){
+  document.getElementById('main').innerHTML =
+    '<div class="done"><div class="cat jp">おつかれさま</div>'+
+    '<h2>このセット完了！</h2>'+
+    '<p>今ある分はひとまずクリア。<br>まちがえたカードは早めに、できたカードはだんだん間をあけて出てくるよ。<br>記録は保存されているから、また開けば続きからできる。</p>'+
+    '<p class="mini">「もう一周」で復習を続けられます。</p>'+
+    '<button class="btn big" id="againAll" style="max-width:320px;margin-top:12px;">もう一周する</button></div>';
+  document.getElementById('againAll').onclick=rebuild;
+  document.getElementById('bar').style.width="100%";
+}
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+
+const CARDHTML = document.getElementById('main').innerHTML;
+function bindCard(){
+  document.getElementById('card').addEventListener('click',()=>{ if(showing==="q") reveal(); });
+  document.getElementById('card').addEventListener('keydown',e=>{ if(e.key===" "||e.key==="Enter"){e.preventDefault(); showing==="q"?reveal():judge(true);} });
+  document.getElementById('revealBtn').onclick=reveal;
+  document.getElementById('againBtn').onclick=()=>judge(false);
+  document.getElementById('goodBtn').onclick=()=>judge(true);
+}
+bindCard();
+document.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
+  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
+  ch.classList.add('on'); filter=ch.dataset.f; showing="q"; rebuild();
+});
+document.getElementById('restart').onclick=()=>{
+  if(confirm("覚えた記録を全部消して、最初からにする？")){ state={}; save(); showing="q"; rebuild(); }
+};
+rebuild();
+</script>
+</body>
+</html>
