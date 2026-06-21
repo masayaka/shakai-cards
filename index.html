@@ -3,64 +3,111 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>社会 暗記カード</title>
+<title>莉奈の暗記カード</title>
 <style>
   :root{
-    --ink:#13241c; --paper:#f3efe4; --moss:#2f6b4f; --moss-d:#1f4a36;
-    --clay:#c2602f; --gold:#caa54b; --line:#d6cfbd; --aji:#3a5a8c;
-    --good:#2f6b4f; --again:#b4502a; --sky:#dbeaf2; --cream:#fffdf7;
+    --ink:#1d2622; --paper:#eef1ee; --main:#2f6b4f; --mainD:#1f4a36; --gold:#caa54b;
+    --line:#d6cfbd; --cream:#fffdf9; --good:#2f6b4f; --again:#b4502a; --petA:#eef5f1; --petB:#e7f0ea;
   }
   *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
   html,body{margin:0;height:100%;}
   body{background:var(--paper);color:var(--ink);
     font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",system-ui,sans-serif;
-    display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;}
-  header{padding:10px 16px 8px;border-bottom:1px solid var(--line);
-    display:flex;align-items:center;justify-content:space-between;gap:10px;}
-  header h1{font-size:15px;margin:0;letter-spacing:.04em;font-weight:800;}
-  header h1 span{color:var(--moss);}
-  .points{font-variant-numeric:tabular-nums;font-size:15px;font-weight:800;color:var(--clay);}
-  .points small{font-size:11px;color:#9a917c;font-weight:700;}
+    display:flex;flex-direction:column;min-height:100dvh;overflow:hidden;transition:background .3s;}
 
-  /* キャラパネル */
-  .pet{display:flex;align-items:center;gap:12px;padding:10px 16px;
-    background:linear-gradient(180deg,#eef5f1,#e7f0ea);border-bottom:1px solid var(--line);position:relative;overflow:hidden;}
-  .pet .avatar{font-size:42px;line-height:1;filter:drop-shadow(0 3px 4px rgba(0,0,0,.12));transition:transform .2s;}
-  .pet.evolve .avatar{animation:pop .9s ease;}
-  @keyframes pop{0%{transform:scale(.5) rotate(-8deg);}40%{transform:scale(1.35) rotate(6deg);}70%{transform:scale(.95);}100%{transform:scale(1);}}
+  /* ===== ホーム ===== */
+  #home{flex:1;display:flex;flex-direction:column;padding:22px 18px calc(18px + env(safe-area-inset-bottom));gap:16px;overflow-y:auto;}
+  .home-head{text-align:center;margin-top:6px;}
+  .home-head h1{font-size:21px;margin:0;font-weight:800;letter-spacing:.04em;color:var(--mainD);}
+  .home-head p{font-size:12px;color:#7c8079;margin:5px 0 0;}
+  .subjects{display:flex;flex-direction:column;gap:13px;max-width:520px;width:100%;margin:4px auto 0;}
+  .scard{display:flex;align-items:center;gap:14px;background:var(--cream);border:1px solid var(--line);
+    border-radius:18px;padding:15px 16px;cursor:pointer;box-shadow:0 6px 18px rgba(31,74,54,.07);
+    transition:transform .1s,box-shadow .1s;text-align:left;width:100%;font-family:inherit;}
+  .scard:active{transform:scale(.985);}
+  .scard .emo{font-size:38px;line-height:1;filter:drop-shadow(0 2px 3px rgba(0,0,0,.12));}
+  .scard .body{flex:1;min-width:0;}
+  .scard .nm{font-size:17px;font-weight:800;color:var(--mainD);}
+  .scard .meta{font-size:11px;color:#8b8f88;margin-top:1px;}
+  .scard .pbar{height:6px;background:#e7e2d6;border-radius:99px;margin-top:7px;overflow:hidden;}
+  .scard .pbar > i{display:block;height:100%;width:0;border-radius:99px;transition:width .4s;}
+  .scard .go{font-size:22px;color:#c3bca9;font-weight:800;}
+  .home-foot{text-align:center;font-size:11px;color:#9a9e96;margin-top:auto;padding-top:10px;}
+
+  /* ===== ゲーム ===== */
+  #game{flex:1;display:none;flex-direction:column;min-height:100dvh;}
+  #game.on{display:flex;}
+  header{padding:9px 14px 8px;border-bottom:1px solid var(--line);display:flex;align-items:center;gap:10px;}
+  .back{font-size:18px;font-weight:800;color:var(--main);background:none;border:none;cursor:pointer;padding:2px 6px;font-family:inherit;}
+  header h1{flex:1;font-size:15px;margin:0;font-weight:800;letter-spacing:.03em;}
+  header h1 span{color:var(--main);}
+  .points{font-variant-numeric:tabular-nums;font-size:15px;font-weight:800;color:var(--gold);white-space:nowrap;}
+  .points small{font-size:11px;color:#9a9e96;font-weight:700;}
+
+  .pet{display:flex;align-items:center;gap:14px;padding:13px 16px;
+    background:linear-gradient(180deg,var(--petA),var(--petB));border-bottom:1px solid var(--line);overflow:hidden;}
+  .pet .avatar{font-size:60px;line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.22));}
+  .pet.evolve .avatar{animation:pop 1s cubic-bezier(.3,1.6,.5,1);}
+  @keyframes pop{0%{transform:scale(.4) rotate(-14deg);}35%{transform:scale(1.6) rotate(10deg);}55%{transform:scale(.9) rotate(-4deg);}75%{transform:scale(1.18) rotate(2deg);}100%{transform:scale(1);}}
   .pet .info{flex:1;min-width:0;}
-  .pet .pname{font-size:14px;font-weight:800;color:var(--moss-d);line-height:1.2;}
-  .pet .pword{font-size:11px;color:#6f7d72;margin-top:1px;}
-  .pet .evobar{height:7px;background:#d4e2d8;border-radius:99px;margin-top:6px;overflow:hidden;}
-  .pet .evobar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--moss),var(--gold));transition:width .4s;}
-  .pet .evonext{font-size:10px;color:#8a9389;margin-top:3px;font-variant-numeric:tabular-nums;}
+  .pet .pname{font-size:14px;font-weight:800;color:var(--mainD);}
+  .pet .pword{font-size:11px;color:#6f7d76;margin-top:1px;}
+  .pet .evobar{height:7px;background:rgba(0,0,0,.08);border-radius:99px;margin-top:6px;overflow:hidden;}
+  .pet .evobar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--main),var(--gold));transition:width .4s;}
+  .pet .evonext{font-size:10px;color:#8a948c;margin-top:3px;font-variant-numeric:tabular-nums;}
 
-  /* マスター進捗 */
   .master{padding:7px 16px 8px;border-bottom:1px solid var(--line);background:var(--cream);}
-  .master .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:800;color:var(--moss-d);}
-  .master .row b{color:var(--clay);font-variant-numeric:tabular-nums;}
+  .master .row{display:flex;justify-content:space-between;align-items:baseline;font-size:12px;font-weight:800;color:var(--mainD);}
+  .master .row b{color:var(--gold);font-variant-numeric:tabular-nums;}
   .master .bar{height:5px;background:var(--line);border-radius:99px;margin-top:5px;overflow:hidden;}
-  .master .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--aji),var(--moss));transition:width .3s;}
+  .master .bar > i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--main),var(--good));transition:width .3s;}
 
   main{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:14px;gap:12px;position:relative;}
-  .cat{font-size:11px;font-weight:800;letter-spacing:.12em;padding:3px 11px;border-radius:999px;}
-  .cat.jp{background:#e4efe7;color:var(--moss-d);} .cat.aj{background:#e5ecf5;color:var(--aji);}
+  .cat{font-size:11px;font-weight:800;letter-spacing:.08em;padding:3px 11px;border-radius:999px;background:#eee;color:#555;}
   .card{width:100%;max-width:520px;min-height:34dvh;background:var(--cream);border:1px solid var(--line);
-    border-radius:20px;box-shadow:0 10px 28px rgba(31,74,54,.10);
+    border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,.10);
     display:flex;flex-direction:column;align-items:center;justify-content:center;
     text-align:center;padding:26px 22px;cursor:pointer;position:relative;transition:transform .12s;}
   .card:active{transform:scale(.992);}
-  .qlabel{position:absolute;top:13px;left:16px;font-size:11px;font-weight:800;letter-spacing:.14em;color:#a89f88;}
-  .rank{position:absolute;top:13px;right:14px;font-size:11px;font-weight:800;color:#bcae8f;font-variant-numeric:tabular-nums;}
-  .qtext{font-size:20px;line-height:1.5;font-weight:700;}
-  .atext{font-size:26px;line-height:1.45;font-weight:800;color:var(--moss-d);}
-  .hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:12px;color:#a89f88;}
+  .qlabel{position:absolute;top:13px;left:16px;font-size:11px;font-weight:800;letter-spacing:.14em;color:#aaa49a;}
+  .rank{position:absolute;top:13px;right:14px;font-size:11px;font-weight:800;color:#aaa49a;font-variant-numeric:tabular-nums;}
+  .qtext{line-height:1.5;font-weight:700;transition:font-size .15s;}
+  .qtext.big{font-size:20px;}
+  .qtext.small{font-size:15px;color:#6b6f68;}
+  .adiv{display:none;flex-direction:column;align-items:center;gap:6px;margin-top:14px;width:100%;}
+  .adiv.show{display:flex;}
+  .adiv .line{width:44px;height:3px;background:var(--gold);border-radius:2px;}
+  .adiv .alabel{font-size:11px;font-weight:800;letter-spacing:.14em;color:#aaa49a;}
+  .atext{font-size:25px;line-height:1.45;font-weight:800;color:var(--mainD);}
+  .hint{position:absolute;bottom:12px;left:0;right:0;text-align:center;font-size:12px;color:#aaa49a;}
 
-  /* コンボ・獲得表示 */
-  .combo{height:22px;font-size:14px;font-weight:800;color:var(--clay);display:flex;align-items:center;gap:5px;}
+  .combo{height:24px;font-size:15px;font-weight:800;display:flex;align-items:center;justify-content:center;gap:5px;transition:color .15s;}
   .combo.hidden{opacity:0;}
-  .float{position:absolute;top:30%;left:50%;transform:translateX(-50%);font-size:30px;font-weight:900;
-    pointer-events:none;opacity:0;}
+  .combo b{font-weight:900;}
+  .combo.hot1{color:var(--gold);}
+  .combo.hot2{color:#e8821f;}
+  .combo.hot3{color:#e0492a;}
+  .combo.hot4{color:#c0392b;animation:cpulse .55s infinite alternate;}
+  .combo.hot5{font-size:16.5px;animation:crainbow 1.1s linear infinite, cpulse .4s infinite alternate;}
+  @keyframes cpulse{from{transform:scale(1);}to{transform:scale(1.13);}}
+  @keyframes crainbow{0%{color:#e0492a;}25%{color:#e8821f;}50%{color:#caa54b;}75%{color:#6a4d9c;}100%{color:#e0492a;}}
+
+  #celebrate{position:fixed;inset:0;z-index:30;display:none;flex-direction:column;align-items:center;justify-content:center;
+    background:radial-gradient(circle at 50% 38%, rgba(40,55,46,.72), rgba(15,22,18,.9));
+    overflow:hidden;text-align:center;padding:24px;}
+  #celebrate.on{display:flex;animation:cfade .35s ease;}
+  @keyframes cfade{from{opacity:0;}to{opacity:1;}}
+  #celebrate .bigEmoji{font-size:118px;line-height:1;filter:drop-shadow(0 8px 18px rgba(0,0,0,.5));
+    animation:hero 1.25s cubic-bezier(.2,1.5,.4,1);}
+  @keyframes hero{0%{transform:scale(0) rotate(-45deg);opacity:0;}55%{transform:scale(1.35) rotate(10deg);opacity:1;}78%{transform:scale(.92) rotate(-4deg);}100%{transform:scale(1) rotate(0);}}
+  #celebrate .ribbon{margin-top:6px;font-size:13px;font-weight:800;letter-spacing:.2em;color:#ffe9b8;}
+  #celebrate h2{color:#fff;font-size:30px;margin:8px 0 6px;text-shadow:0 2px 10px rgba(0,0,0,.45);font-weight:900;}
+  #celebrate p{color:#ffe9b8;font-size:15px;font-weight:700;line-height:1.6;margin:0;}
+  #celebrate .tapclose{margin-top:22px;color:#fff;font-size:13px;font-weight:700;opacity:.9;
+    border:1.5px solid rgba(255,255,255,.55);padding:11px 26px;border-radius:99px;}
+  .confetti{position:absolute;top:-24px;width:10px;height:16px;opacity:.96;will-change:transform;}
+  @keyframes fall{0%{transform:translateY(-30px) rotate(0deg);}100%{transform:translateY(104vh) rotate(760deg);}}
+  .float{position:absolute;top:30%;left:50%;transform:translateX(-50%);font-size:30px;font-weight:900;pointer-events:none;opacity:0;}
   .float.go{animation:floatup 1s ease-out;}
   .float.plus{color:var(--good);} .float.minus{color:var(--again);} .float.bonus{color:var(--gold);}
   @keyframes floatup{0%{opacity:0;transform:translate(-50%,10px) scale(.7);}25%{opacity:1;}100%{opacity:0;transform:translate(-50%,-46px) scale(1.15);}}
@@ -69,122 +116,214 @@
   .btn{flex:1;border:none;border-radius:14px;padding:15px 10px;font-size:15px;font-weight:800;color:#fff;
     cursor:pointer;font-family:inherit;letter-spacing:.04em;transition:transform .1s;}
   .btn:active{transform:translateY(1px);}
-  .btn.again{background:var(--again);} .btn.good{background:var(--good);} .btn.big{background:var(--moss);}
+  .btn.again{background:var(--again);} .btn.good{background:var(--good);} .btn.big{background:var(--main);}
   .reveal{width:100%;max-width:520px;} .reveal .btn{width:100%;}
 
   footer{padding:8px 14px calc(8px + env(safe-area-inset-bottom));border-top:1px solid var(--line);
     display:flex;justify-content:space-between;align-items:center;gap:8px;}
-  .seg{display:flex;gap:6px;}
-  .chip{font-size:12px;font-weight:700;padding:6px 11px;border-radius:999px;border:1px solid var(--line);
-    background:var(--cream);color:#5b5444;cursor:pointer;}
-  .chip.on{background:var(--moss);color:#fff;border-color:var(--moss);}
-  .restart{font-size:11px;font-weight:700;color:var(--clay);background:none;border:none;cursor:pointer;text-decoration:underline;}
+  .seg{display:flex;gap:6px;flex-wrap:wrap;}
+  .chip{font-size:12px;font-weight:700;padding:6px 10px;border-radius:999px;border:1px solid var(--line);
+    background:var(--cream);color:#5b5444;cursor:pointer;font-family:inherit;}
+  .chip.on{background:var(--main);color:#fff;border-color:var(--main);}
+  .restart{font-size:11px;font-weight:700;color:var(--again);background:none;border:none;cursor:pointer;text-decoration:underline;white-space:nowrap;}
 
   .toast{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:9;
-    background:var(--moss-d);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;font-size:15px;
+    background:var(--mainD);color:#fff;padding:12px 20px;border-radius:14px;font-weight:800;font-size:15px;
     box-shadow:0 8px 24px rgba(0,0,0,.2);opacity:0;pointer-events:none;text-align:center;}
   .toast.show{animation:toast 2.2s ease;}
   @keyframes toast{0%{opacity:0;transform:translate(-50%,-8px);}12%{opacity:1;transform:translate(-50%,0);}80%{opacity:1;}100%{opacity:0;}}
   .toast .big{font-size:30px;display:block;margin-bottom:2px;}
 
   .done{text-align:center;max-width:520px;padding:0 6px;}
-  .done h2{font-size:22px;margin:.2em 0;color:var(--moss-d);}
-  .done p{color:#6a6354;font-size:14px;line-height:1.7;}
+  .done h2{font-size:22px;margin:.2em 0;color:var(--mainD);}
+  .done p{color:#5f6f69;font-size:14px;line-height:1.7;}
   .done .hero{font-size:64px;}
   @media (prefers-reduced-motion: reduce){*{animation:none!important;transition:none!important;}}
 </style>
 </head>
 <body>
-<header>
-  <h1>社会 <span>暗記カード</span></h1>
-  <div class="points">🪙 <span id="pts">0</span><small> ポイント</small></div>
-</header>
 
-<div class="pet" id="pet">
-  <div class="avatar" id="avatar">🥚</div>
-  <div class="info">
-    <div class="pname" id="pname">たまご</div>
-    <div class="pword" id="pword">なにかが ねむっている…</div>
-    <div class="evobar"><i id="evobar"></i></div>
-    <div class="evonext" id="evonext"></div>
+<div id="home">
+  <div class="home-head">
+    <h1>莉奈の暗記カード</h1>
+    <p>きょうは どれを やる？</p>
+    <div id="syncDot" style="font-size:11px;font-weight:700;margin-top:5px;color:#9a9e96;">📱 この端末のみ</div>
   </div>
+  <div class="subjects" id="subjects"></div>
+  <div class="home-foot">まちがえたカードは早めに、覚えたカードはだんだん間をあけて出てくるよ</div>
 </div>
 
-<div class="master">
-  <div class="row"><span>ぜんぶ覚えるまで</span><span>あと <b id="left">―</b> 枚（<span id="mpct">0</span>%）</span></div>
-  <div class="bar"><i id="mbar"></i></div>
+<div id="game">
+  <header>
+    <button class="back" id="back">←</button>
+    <h1 id="ghead"><span>―</span></h1>
+    <div class="points">✦ <span id="pts">0</span><small> pt</small></div>
+  </header>
+  <div class="pet" id="pet">
+    <div class="avatar" id="avatar">🥚</div>
+    <div class="info">
+      <div class="pname" id="pname">―</div>
+      <div class="pword" id="pword">―</div>
+      <div class="evobar"><i id="evobar"></i></div>
+      <div class="evonext" id="evonext"></div>
+    </div>
+  </div>
+  <div class="master">
+    <div class="row"><span>ぜんぶ覚えるまで</span><span>あと <b id="left">―</b> 枚（<span id="mpct">0</span>%）</span></div>
+    <div class="bar"><i id="mbar"></i></div>
+  </div>
+  <main id="main">
+    <div class="combo hidden" id="combo"></div>
+    <div class="cat" id="cat">―</div>
+    <div class="card" id="card" role="button" tabindex="0">
+      <div class="qlabel" id="face">とい</div>
+      <div class="rank" id="rank"></div>
+      <div class="qtext big" id="qtext">読み込み中…</div>
+      <div class="adiv" id="adiv">
+        <div class="line"></div>
+        <div class="alabel">こたえ</div>
+        <div class="atext" id="atext"></div>
+      </div>
+      <div class="hint" id="hint">タップで答え</div>
+    </div>
+    <div class="float" id="float"></div>
+    <div class="reveal" id="revealWrap"><button class="btn big" id="revealBtn">答えを見る</button></div>
+    <div class="controls" id="judgeWrap" style="display:none">
+      <button class="btn again" id="againBtn">まちがえた</button>
+      <button class="btn good" id="goodBtn">できた</button>
+    </div>
+  </main>
+  <footer>
+    <div class="seg" id="seg"></div>
+    <button class="restart" id="restart">記録リセット</button>
+  </footer>
 </div>
-
-<main id="main">
-  <div class="combo hidden" id="combo"></div>
-  <div class="cat jp" id="cat">―</div>
-  <div class="card" id="card" role="button" tabindex="0" aria-label="カードをめくる">
-    <div class="qlabel" id="face">とい</div>
-    <div class="rank" id="rank"></div>
-    <div class="qtext" id="text">読み込み中…</div>
-    <div class="hint" id="hint">タップで答え</div>
-  </div>
-  <div class="float" id="float"></div>
-  <div class="reveal" id="revealWrap"><button class="btn big" id="revealBtn">答えを見る</button></div>
-  <div class="controls" id="judgeWrap" style="display:none">
-    <button class="btn again" id="againBtn">まちがえた</button>
-    <button class="btn good" id="goodBtn">できた</button>
-  </div>
-</main>
-
-<footer>
-  <div class="seg">
-    <button class="chip on" data-f="all">ぜんぶ</button>
-    <button class="chip" data-f="日本の地形">地形</button>
-    <button class="chip" data-f="アジア">アジア</button>
-  </div>
-  <button class="restart" id="restart">記録リセット</button>
-</footer>
 
 <div class="toast" id="toast"></div>
 
+<div id="celebrate">
+  <div class="bigEmoji">🐉</div>
+  <div class="ribbon">★ COMPLETE ★</div>
+  <h2>🎉 ぜんぶ覚えた！ 🎉</h2>
+  <p>―</p>
+  <div class="tapclose">タップで とじる</div>
+</div>
+
 <script>
-const ALL = [{"cat": "日本の地形", "q": "日本列島が属する、火山活動や地震が活発な地域を何というか。", "a": "変動帯", "id": 0}, {"cat": "日本の地形", "q": "日本列島は、何という地域の変動帯に属するか。", "a": "環太平洋地域", "id": 1}, {"cat": "日本の地形", "q": "日本の陸地の約何分の何が、山地・丘陵地か。", "a": "約4分の3", "id": 2}, {"cat": "日本の地形", "q": "日本の陸地の約4分の3をしめる地形は何か。", "a": "山地・丘陵地", "id": 3}, {"cat": "日本の地形", "q": "本州中央部の飛驒・木曽・赤石山脈をまとめて何と呼ぶか。", "a": "日本アルプス", "id": 4}, {"cat": "日本の地形", "q": "日本アルプスをつくる3つの山脈を答えよ。", "a": "飛驒山脈・木曽山脈・赤石山脈", "id": 5}, {"cat": "日本の地形", "q": "日本アルプスの東側にある、地形の大きな境目を何というか。", "a": "フォッサマグナ", "id": 6}, {"cat": "日本の地形", "q": "日本の川は、外国の川に比べて長さが短く、流れがどうか。", "a": "急(急流)", "id": 7}, {"cat": "日本の地形", "q": "日本の川は、流域面積が広いか、せまいか。", "a": "せまい", "id": 8}, {"cat": "日本の地形", "q": "海に面した平らな土地を何というか。", "a": "平野", "id": 9}, {"cat": "日本の地形", "q": "内陸の、山に囲まれた平地を何というか。", "a": "盆地", "id": 10}, {"cat": "日本の地形", "q": "川が山から平地に出たところに土砂が積もってできた地形を何というか。", "a": "扇状地", "id": 11}, {"cat": "日本の地形", "q": "川が海や湖に出る河口に土砂が積もってできた地形を何というか。", "a": "三角州", "id": 12}, {"cat": "日本の地形", "q": "日本一長い川は何か。", "a": "信濃川", "id": 13}, {"cat": "日本の地形", "q": "流域面積が日本一広い川は何か。", "a": "利根川", "id": 14}, {"cat": "日本の地形", "q": "北海道を流れ、石狩平野をつくる川は何か。", "a": "石狩川", "id": 15}, {"cat": "日本の地形", "q": "信濃川がつくる平野は何か。", "a": "越後平野", "id": 16}, {"cat": "日本の地形", "q": "利根川がつくる平野は何か。", "a": "関東平野", "id": 17}, {"cat": "日本の地形", "q": "木曽川がつくる平野は何か。", "a": "濃尾平野", "id": 18}, {"cat": "日本の地形", "q": "筑後川がつくる平野は何か。", "a": "筑紫平野", "id": 19}, {"cat": "日本の地形", "q": "砂浜海岸に発達する、砂が積もった地形を何というか。", "a": "砂丘", "id": 20}, {"cat": "日本の地形", "q": "湾と岬が連続する、出入りの複雑な海岸を何というか。", "a": "リアス海岸", "id": 21}, {"cat": "日本の地形", "q": "東北地方の太平洋側にある、リアス海岸で有名な海岸を何というか。", "a": "三陸海岸", "id": 22}, {"cat": "日本の地形", "q": "日本近海にある、深さ約200mまでのなだらかな海底を何というか。", "a": "大陸棚", "id": 23}, {"cat": "日本の地形", "q": "深さ8000mを超えるような、海底の深いみぞを何というか。", "a": "海溝", "id": 24}, {"cat": "日本の地形", "q": "東日本の太平洋沖を流れる暖流を何というか。", "a": "黒潮(日本海流)", "id": 25}, {"cat": "日本の地形", "q": "東日本の太平洋沖を流れる寒流を何というか。", "a": "親潮(千島海流)", "id": 26}, {"cat": "日本の地形", "q": "黒潮の、もう一つの呼び名は。", "a": "日本海流", "id": 27}, {"cat": "日本の地形", "q": "親潮の、もう一つの呼び名は。", "a": "千島海流", "id": 28}, {"cat": "日本の地形", "q": "暖流と寒流がぶつかり、好漁場となるところを何というか。", "a": "潮目", "id": 29}, {"cat": "日本の地形", "q": "日本海側を流れる暖流を何というか。", "a": "対馬海流", "id": 30}, {"cat": "日本の地形", "q": "日本列島は、まわりを海に囲まれた何といえるか。", "a": "島国", "id": 31}, {"cat": "日本の地形", "q": "北海道東部にある台地を何というか。", "a": "根釧台地", "id": 32}, {"cat": "日本の地形", "q": "赤石山脈は、何という3つの山脈のまとまりの1つか。", "a": "日本アルプス", "id": 33}, {"cat": "日本の地形", "q": "日本で火山活動や地震が活発なのは、何に属するからか。", "a": "変動帯", "id": 34}, {"cat": "日本の地形", "q": "リアス海岸は、湾と何が連続する海岸か。", "a": "岬", "id": 35}, {"cat": "日本の地形", "q": "暖流と寒流がぶつかる潮目は、何が豊かでとれる場所か。", "a": "魚(好漁場)", "id": 36}, {"cat": "日本の地形", "q": "扇状地・三角州のうち、川の河口にできるのはどちらか。", "a": "三角州", "id": 37}, {"cat": "日本の地形", "q": "扇状地・三角州のうち、山から平地へ出たところにできるのはどちらか。", "a": "扇状地", "id": 38}, {"cat": "アジア", "q": "アジアには熱帯〜寒帯、乾燥気候まであり、何がそろっているといえるか。", "a": "世界の気候", "id": 39}, {"cat": "アジア", "q": "日本の年間降水量の平均はおよそ何mmか。", "a": "1750mm", "id": 40}, {"cat": "アジア", "q": "世界の年間降水量の平均はおよそ何mmか。", "a": "750mm", "id": 41}, {"cat": "アジア", "q": "東アジア〜南アジアで降水量が多いのは、何の影響か。", "a": "季節風(モンスーン)", "id": 42}, {"cat": "アジア", "q": "季節風をカタカナで何というか。", "a": "モンスーン", "id": 43}, {"cat": "アジア", "q": "降水量が少ないのは、西アジアとどこか。", "a": "内陸", "id": 44}, {"cat": "アジア", "q": "降水量が多い東〜南アジアは、人口が多いか少ないか。", "a": "多い", "id": 45}, {"cat": "アジア", "q": "夏の季節風は、海から陸・陸から海のどちらにふくか。", "a": "海から陸", "id": 46}, {"cat": "アジア", "q": "冬の季節風は、海から陸・陸から海のどちらにふくか。", "a": "陸から海", "id": 47}, {"cat": "アジア", "q": "年降水量2000mmほどの地域で栽培される作物を2つ答えよ。", "a": "カカオ・天然ゴム", "id": 48}, {"cat": "アジア", "q": "年降水量1000mmほどの地域でさかんな農業は何か。", "a": "稲作", "id": 49}, {"cat": "アジア", "q": "年降水量500mmほどの地域でさかんな農業は何か。", "a": "麦・畑作", "id": 50}, {"cat": "アジア", "q": "地震や火山活動がさかんな、山地が連なる帯を何というか。", "a": "造山帯", "id": 51}, {"cat": "アジア", "q": "太平洋を取り囲む造山帯を何というか。", "a": "環太平洋造山帯", "id": 52}, {"cat": "アジア", "q": "ヨーロッパからアジアにのびる造山帯を何というか。", "a": "アルプス・ヒマラヤ造山帯", "id": 53}, {"cat": "アジア", "q": "大陸はもとひとつで、分かれて移動したという説を何というか。", "a": "大陸移動説", "id": 54}, {"cat": "アジア", "q": "大陸移動説を唱えたドイツの学者はだれか。", "a": "ウェゲナー", "id": 55}, {"cat": "アジア", "q": "大陸移動説で、もとひとつだったとされる大陸を何というか。", "a": "パンゲア", "id": 56}, {"cat": "アジア", "q": "パンゲアが分かれた北側の大陸を何というか。", "a": "ローラシア大陸", "id": 57}, {"cat": "アジア", "q": "パンゲアが分かれた南側の大陸を何というか。", "a": "ゴンドワナ大陸", "id": 58}, {"cat": "アジア", "q": "ローラシア大陸から分かれた大陸を2つ答えよ。", "a": "ユーラシア大陸・北アメリカ大陸", "id": 59}, {"cat": "アジア", "q": "ゴンドワナ大陸から分かれた大陸を4つ答えよ。", "a": "アフリカ・南アメリカ・オーストラリア・南極", "id": 60}, {"cat": "アジア", "q": "中国の正式名称を答えよ。", "a": "中華人民共和国", "id": 61}, {"cat": "アジア", "q": "中国の東部(臨海部)は、低地・高地のどちらか。", "a": "低地", "id": 62}, {"cat": "アジア", "q": "中国の西部(内陸部)は、低地・高地のどちらか。", "a": "高地", "id": 63}, {"cat": "アジア", "q": "中国北部を流れる大河を何というか。", "a": "黄河", "id": 64}, {"cat": "アジア", "q": "中国中部を流れる、中国最長の川を何というか。", "a": "長江", "id": 65}, {"cat": "アジア", "q": "中国東部に広がる平原を何というか。", "a": "華北平原", "id": 66}, {"cat": "アジア", "q": "稲作のさかんな、中国内陸部の盆地を何というか。", "a": "スーチョワン盆地(四川盆地)", "id": 67}, {"cat": "アジア", "q": "中国の総人口はおよそ何人か。", "a": "14億人", "id": 68}, {"cat": "アジア", "q": "かつて中国で行われた、子どもの数を制限する政策を何というか。", "a": "ひとりっ子政策", "id": 69}, {"cat": "アジア", "q": "ひとりっ子政策の影響で、現在の中国で不足しているものは。", "a": "労働力", "id": 70}, {"cat": "アジア", "q": "多くの民族からなる国家を何というか。", "a": "多民族国家", "id": 71}, {"cat": "アジア", "q": "中国の人口の約90%を占める民族は何か。", "a": "漢民族", "id": 72}, {"cat": "アジア", "q": "中国でイスラム教を信仰する民族は何族か。", "a": "シンチヤンウイグル族", "id": 73}, {"cat": "アジア", "q": "チベット族やモンゴル族が信仰している宗教は何か。", "a": "チベット仏教", "id": 74}, {"cat": "アジア", "q": "中国の政治を一手に担う政党は何か。", "a": "中国共産党", "id": 75}, {"cat": "アジア", "q": "中国の現在の国家主席はだれか。", "a": "習近平", "id": 76}, {"cat": "アジア", "q": "中国で多く産出され、CO2排出の原因にもなる資源は。", "a": "石炭", "id": 77}, {"cat": "アジア", "q": "2000年頃に急成長した中国が呼ばれるようになった言葉は。", "a": "世界の工場", "id": 78}, {"cat": "アジア", "q": "中国で問題となっている、内陸部と臨海部の差を何というか。", "a": "経済格差", "id": 79}, {"cat": "アジア", "q": "中国の経済格差で、所得が高いのは西部・東部どちらか。", "a": "東部(臨海部)", "id": 80}, {"cat": "アジア", "q": "中国の首都はどこか。", "a": "北京(ペキン)", "id": 81}, {"cat": "アジア", "q": "中国最大の都市はどこか。", "a": "上海(シャンハイ)", "id": 82}, {"cat": "アジア", "q": "イギリスから中国へ返還された都市はどこか。", "a": "香港(ホンコン)", "id": 83}, {"cat": "アジア", "q": "香港がイギリスから中国に返還されたのは何年か。", "a": "1997年 ※ノートは1999年", "id": 84}, {"cat": "アジア", "q": "中国の歴史都市として知られる、かつての都はどこか。", "a": "西安(シーアン)", "id": 85}, {"cat": "アジア", "q": "茶の産地として有名な中国の省はどこか。", "a": "福建省", "id": 86}, {"cat": "アジア", "q": "1年に同じ田で2回米を作ることを何というか。", "a": "二期作", "id": 87}, {"cat": "アジア", "q": "玄武岩からなり、綿花栽培がさかんなインドの高原は。", "a": "デカン高原", "id": 88}, {"cat": "アジア", "q": "ガンジス川が流れ、稲作がさかんなインドの平原は。", "a": "ヒンドスタン平原", "id": 89}, {"cat": "アジア", "q": "ヒンドスタン平原を流れる大河を何というか。", "a": "ガンジス川", "id": 90}, {"cat": "アジア", "q": "インドの南にある島を何というか。", "a": "セイロン島", "id": 91}, {"cat": "アジア", "q": "世界三大洋のうち、インドの南に広がる海洋は。", "a": "インド洋", "id": 92}, {"cat": "アジア", "q": "インド洋以外の世界三大洋を2つ答えよ。", "a": "太平洋・大西洋", "id": 93}, {"cat": "アジア", "q": "古代四大文明の一つがおこり、小麦の産地でもある平原は。", "a": "インダス平原", "id": 94}, {"cat": "アジア", "q": "インドの東、緯度10度付近にある、サイクロンの被害を受ける湾は。", "a": "ベンガル湾", "id": 95}, {"cat": "アジア", "q": "ベンガル湾などでおこる熱帯低気圧を何というか。", "a": "サイクロン", "id": 96}, {"cat": "アジア", "q": "インドの気候に強い影響をあたえるものは何か。", "a": "モンスーン(季節風)", "id": 97}, {"cat": "アジア", "q": "インドの夏の季節風の風向と気候を答えよ。", "a": "南西風・高温多湿", "id": 98}, {"cat": "アジア", "q": "インドの冬の季節風の風向と気候を答えよ。", "a": "北東風・寒冷乾燥", "id": 99}, {"cat": "アジア", "q": "インドで人口の約90%が信仰する多神教の宗教は。", "a": "ヒンズー教", "id": 100}, {"cat": "アジア", "q": "ヒンズー教で食べることが禁止されている肉は。", "a": "牛(牛肉)", "id": 101}, {"cat": "アジア", "q": "インドで人口の約10%が信仰し、アッラーを神とする宗教は。", "a": "イスラム教", "id": 102}, {"cat": "アジア", "q": "イスラム教で食べることが禁止されている肉は。", "a": "豚(豚肉)", "id": 103}, {"cat": "アジア", "q": "ヒンズー教・イスラム教以外のインドの宗教を1つ答えよ。", "a": "シーク教", "id": 104}, {"cat": "アジア", "q": "インドで最も多く使われる公用語は何か。", "a": "ヒンディー語", "id": 105}, {"cat": "アジア", "q": "インド南部で使われる言語を何というか。", "a": "ドラビダ語", "id": 106}, {"cat": "アジア", "q": "インドの古くからの身分制度を何というか。", "a": "カースト制", "id": 107}, {"cat": "アジア", "q": "インドとパキスタンが領有を争っている地方は。", "a": "カシミール地方", "id": 108}, {"cat": "アジア", "q": "スリランカで対立しているのは、仏教徒と何教徒か。", "a": "ヒンズー教徒", "id": 109}, {"cat": "アジア", "q": "綿花の主な産地であるインドの高原は。", "a": "デカン高原", "id": 110}, {"cat": "アジア", "q": "インドで茶の栽培がさかんな北東部の地方は。", "a": "アッサム地方", "id": 111}, {"cat": "アジア", "q": "アッサム地方の茶の中心都市はどこか。", "a": "ダージリン", "id": 112}, {"cat": "アジア", "q": "茶の産地セイロン島は、現在の何という国か。", "a": "スリランカ", "id": 113}, {"cat": "アジア", "q": "インドでさかんな、麻の一種の作物を何というか。", "a": "ジュート(麻)", "id": 114}, {"cat": "アジア", "q": "インドの首都はどこか。", "a": "デリー(ニューデリー)", "id": 115}, {"cat": "アジア", "q": "ITで発展したインド南部の都市はどこか。", "a": "バンガロール", "id": 116}, {"cat": "アジア", "q": "ガンジス川下流にあるインドの都市はどこか。", "a": "コルカタ", "id": 117}, {"cat": "アジア", "q": "パキスタンの首都はどこか。", "a": "イスラマバード", "id": 118}, {"cat": "アジア", "q": "ネパールの首都はどこか。", "a": "カトマンズ", "id": 119}, {"cat": "アジア", "q": "バングラデシュの首都はどこか。", "a": "ダッカ", "id": 120}, {"cat": "アジア", "q": "スリランカの首都はどこか。", "a": "スリジャヤワルダナプラコッテ", "id": 121}, {"cat": "アジア", "q": "朝鮮半島北側の、社会主義国の正式名称は。", "a": "朝鮮民主主義人民共和国", "id": 122}, {"cat": "アジア", "q": "第二次世界大戦が終わったのは何年か。", "a": "1945年", "id": 123}, {"cat": "アジア", "q": "1977〜1983年に起きた、北朝鮮による日本人拉致は何回か。", "a": "12回", "id": 124}, {"cat": "アジア", "q": "北朝鮮が開発したミサイルの名前を1つ答えよ。", "a": "テポドン", "id": 125}, {"cat": "アジア", "q": "1894年に起こり、台湾が日本の植民地となるきっかけの戦争は。", "a": "日清戦争", "id": 126}, {"cat": "アジア", "q": "日清戦争の後、日本の植民地となった地域はどこか。", "a": "台湾", "id": 127}, {"cat": "アジア", "q": "戦後、中国共産党と争った資本主義の政党は何か。", "a": "中国国民党", "id": 128}, {"cat": "アジア", "q": "戦後、中国国民党が台湾に建てた国の名前は。", "a": "中華民国", "id": 129}, {"cat": "アジア", "q": "中国共産党が大陸に建てた国の名前は。", "a": "中華人民共和国", "id": 130}, {"cat": "アジア", "q": "中国共産党は社会主義・資本主義のどちらの立場か。", "a": "社会主義", "id": 131}, {"cat": "アジア", "q": "中国国民党は社会主義・資本主義のどちらの立場か。", "a": "資本主義", "id": 132}, {"cat": "アジア", "q": "1392〜1897年まで続いた朝鮮の王朝を何というか。", "a": "李氏朝鮮", "id": 133}, {"cat": "アジア", "q": "李氏朝鮮に出兵した日本の武将はだれか。", "a": "豊臣秀吉", "id": 134}, {"cat": "アジア", "q": "1894年に起きた、日本と清の戦争を何というか。", "a": "日清戦争", "id": 135}, {"cat": "アジア", "q": "1904年に起きた、日本とロシアの戦争を何というか。", "a": "日露戦争", "id": 136}, {"cat": "アジア", "q": "1910年に日本が韓国を併合したことを何というか。", "a": "日韓併合", "id": 137}, {"cat": "アジア", "q": "1945年の終戦で、朝鮮は何から解放されたか。", "a": "日本の支配(植民地支配)", "id": 138}, {"cat": "アジア", "q": "冷戦体制で、資本主義の立場をとった南側の国は。", "a": "大韓民国", "id": 139}, {"cat": "アジア", "q": "冷戦体制で、社会主義の立場をとった北側の国は。", "a": "朝鮮民主主義人民共和国", "id": 140}, {"cat": "アジア", "q": "1950年に始まった南北朝鮮間の戦争を何というか。", "a": "朝鮮戦争", "id": 141}, {"cat": "アジア", "q": "朝鮮戦争の休戦協定が結ばれたのは何年か。", "a": "1953年 ※ノートは1954年", "id": 142}, {"cat": "アジア", "q": "韓国で1960年にさかんだった工業は何か。", "a": "せんい工業", "id": 143}, {"cat": "アジア", "q": "韓国で1970年に発展した工業を答えよ。", "a": "鉄鋼・造船・自動車", "id": 144}, {"cat": "アジア", "q": "韓国で1990年以降に発展した、半導体やスマホの工業は。", "a": "半導体(電子)工業", "id": 145}, {"cat": "アジア", "q": "韓国の首都はどこか。", "a": "ソウル", "id": 146}, {"cat": "アジア", "q": "韓国第2の都市で、日本の玄関口とされる都市は。", "a": "プサン(釜山)", "id": 147}, {"cat": "アジア", "q": "韓国の民族衣装を何というか。", "a": "チマ・チョゴリ", "id": 148}, {"cat": "アジア", "q": "韓国独自の文字を何というか。", "a": "ハングル文字", "id": 149}, {"cat": "アジア", "q": "発酵させた野菜の韓国料理を何というか。", "a": "キムチ", "id": 150}, {"cat": "アジア", "q": "韓国の伝統的な床暖房を何というか。", "a": "オンドル", "id": 151}, {"cat": "アジア", "q": "米の生産量が世界第1位の国はどこか。", "a": "中国", "id": 152}, {"cat": "アジア", "q": "米の生産量が世界第2位の国はどこか。", "a": "インド", "id": 153}, {"cat": "アジア", "q": "小麦の生産量が世界第1位の国はどこか。", "a": "中国", "id": 154}, {"cat": "アジア", "q": "石炭の産出量が世界第1位(約58%)の国はどこか。", "a": "中国", "id": 155}, {"cat": "アジア", "q": "機械類の輸出額が世界第1位の国はどこか。", "a": "中国", "id": 156}, {"cat": "アジア", "q": "自動車の生産台数が世界第1位の国はどこか。", "a": "中国", "id": 157}, {"cat": "アジア", "q": "産業用ロボットの稼働台数が世界第1位の国はどこか。", "a": "中国", "id": 158}, {"cat": "アジア", "q": "船舶竣工量が世界第1位の国はどこか。", "a": "中国", "id": 159}, {"cat": "アジア", "q": "「世界の工場」と呼ばれる国はどこか。", "a": "中国", "id": 160}, {"cat": "アジア", "q": "デカン高原で栽培がさかんな作物は何か。", "a": "綿花", "id": 161}, {"cat": "アジア", "q": "ヒンドスタン平原でさかんな農業は何か。", "a": "稲作", "id": 162}, {"cat": "アジア", "q": "インダス平原でさかんに作られる作物は何か。", "a": "小麦", "id": 163}, {"cat": "アジア", "q": "牛肉を食べないのは、ヒンズー教・イスラム教どちらか。", "a": "ヒンズー教", "id": 164}, {"cat": "アジア", "q": "豚肉を食べないのは、ヒンズー教・イスラム教どちらか。", "a": "イスラム教", "id": 165}, {"cat": "アジア", "q": "ウェゲナーが唱えたのは何という説か。", "a": "大陸移動説", "id": 166}, {"cat": "アジア", "q": "北京・上海・香港のうち、中国の首都はどれか。", "a": "北京", "id": 167}, {"cat": "アジア", "q": "北京・上海・香港のうち、中国最大の都市はどれか。", "a": "上海", "id": 168}, {"cat": "アジア", "q": "ソウル・プサンのうち、韓国の首都はどれか。", "a": "ソウル", "id": 169}, {"cat": "アジア", "q": "中華人民共和国・中華民国のうち、台湾の国名はどれか。", "a": "中華民国", "id": 170}, {"cat": "アジア", "q": "社会主義国は、大韓民国・北朝鮮のどちらか。", "a": "北朝鮮", "id": 171}, {"cat": "アジア", "q": "資本主義国は、大韓民国・北朝鮮のどちらか。", "a": "大韓民国", "id": 172}, {"cat": "アジア", "q": "日清戦争が起きたのは何年か。", "a": "1894年", "id": 173}, {"cat": "アジア", "q": "日露戦争が起きたのは何年か。", "a": "1904年", "id": 174}, {"cat": "アジア", "q": "日韓併合が行われたのは何年か。", "a": "1910年", "id": 175}, {"cat": "アジア", "q": "朝鮮戦争が始まったのは何年か。", "a": "1950年", "id": 176}, {"cat": "アジア", "q": "アジアのモンスーン地帯にあたるのは、東〜南アジア・西アジアどちらか。", "a": "東〜南アジア", "id": 177}, {"cat": "アジア", "q": "玄武岩でできたインドの高原を何というか。", "a": "デカン高原", "id": 178}, {"cat": "アジア", "q": "古代四大文明がおこったインドの平原は。", "a": "インダス平原", "id": 179}];
+const SUBJECTS = {"shakai": {"name": "社会", "icon": "🌏", "key": "shakai_game_v1", "theme": {"paper": "#f3efe4", "main": "#2f6b4f", "mainD": "#1f4a36", "gold": "#caa54b", "line": "#d6cfbd", "good": "#2f6b4f", "again": "#b4502a", "petA": "#eef5f1", "petB": "#e7f0ea"}, "filters": [["ぜんぶ", "all"], ["地形", "日本の地形"], ["アジア", "アジア"]], "groupColors": {"日本の地形": {"bg": "#e4efe7", "fg": "#1f4a36"}, "アジア": {"bg": "#e5ecf5", "fg": "#3a5a8c"}}, "stages": [{"pt": 0, "emoji": "🥚", "name": "たまご", "word": "なにかが ねむっている…"}, {"pt": 15, "emoji": "🐛", "name": "いのちのめばえ", "word": "うごきだした！"}, {"pt": 40, "emoji": "🐟", "name": "さかな", "word": "うみを およいでいる"}, {"pt": 80, "emoji": "🦎", "name": "りくの いきもの", "word": "りくに あがった！"}, {"pt": 140, "emoji": "🦕", "name": "きょうりゅう", "word": "ぐんぐん そだっている"}, {"pt": 210, "emoji": "🦖", "name": "つよい きょうりゅう", "word": "もう だれにも まけない"}, {"pt": 300, "emoji": "🐉", "name": "でんせつの ドラゴン", "word": "でんせつに なった！"}], "cards": [{"id": 0, "group": "日本の地形", "badge": "日本の地形", "q": "日本列島が属する、火山活動や地震が活発な地域を何というか。", "a": "変動帯"}, {"id": 1, "group": "日本の地形", "badge": "日本の地形", "q": "日本列島は、何という地域の変動帯に属するか。", "a": "環太平洋地域"}, {"id": 2, "group": "日本の地形", "badge": "日本の地形", "q": "日本の陸地の約何分の何が、山地・丘陵地か。", "a": "約4分の3"}, {"id": 3, "group": "日本の地形", "badge": "日本の地形", "q": "日本の陸地の約4分の3をしめる地形は何か。", "a": "山地・丘陵地"}, {"id": 4, "group": "日本の地形", "badge": "日本の地形", "q": "本州中央部の飛驒・木曽・赤石山脈をまとめて何と呼ぶか。", "a": "日本アルプス"}, {"id": 5, "group": "日本の地形", "badge": "日本の地形", "q": "日本アルプスをつくる3つの山脈を答えよ。", "a": "飛驒山脈・木曽山脈・赤石山脈"}, {"id": 6, "group": "日本の地形", "badge": "日本の地形", "q": "日本アルプスの東側にある、地形の大きな境目を何というか。", "a": "フォッサマグナ"}, {"id": 7, "group": "日本の地形", "badge": "日本の地形", "q": "日本の川は、外国の川に比べて長さが短く、流れがどうか。", "a": "急(急流)"}, {"id": 8, "group": "日本の地形", "badge": "日本の地形", "q": "日本の川は、流域面積が広いか、せまいか。", "a": "せまい"}, {"id": 9, "group": "日本の地形", "badge": "日本の地形", "q": "海に面した平らな土地を何というか。", "a": "平野"}, {"id": 10, "group": "日本の地形", "badge": "日本の地形", "q": "内陸の、山に囲まれた平地を何というか。", "a": "盆地"}, {"id": 11, "group": "日本の地形", "badge": "日本の地形", "q": "川が山から平地に出たところに土砂が積もってできた地形を何というか。", "a": "扇状地"}, {"id": 12, "group": "日本の地形", "badge": "日本の地形", "q": "川が海や湖に出る河口に土砂が積もってできた地形を何というか。", "a": "三角州"}, {"id": 13, "group": "日本の地形", "badge": "日本の地形", "q": "日本一長い川は何か。", "a": "信濃川"}, {"id": 14, "group": "日本の地形", "badge": "日本の地形", "q": "流域面積が日本一広い川は何か。", "a": "利根川"}, {"id": 15, "group": "日本の地形", "badge": "日本の地形", "q": "北海道を流れ、石狩平野をつくる川は何か。", "a": "石狩川"}, {"id": 16, "group": "日本の地形", "badge": "日本の地形", "q": "信濃川がつくる平野は何か。", "a": "越後平野"}, {"id": 17, "group": "日本の地形", "badge": "日本の地形", "q": "利根川がつくる平野は何か。", "a": "関東平野"}, {"id": 18, "group": "日本の地形", "badge": "日本の地形", "q": "木曽川がつくる平野は何か。", "a": "濃尾平野"}, {"id": 19, "group": "日本の地形", "badge": "日本の地形", "q": "筑後川がつくる平野は何か。", "a": "筑紫平野"}, {"id": 20, "group": "日本の地形", "badge": "日本の地形", "q": "砂浜海岸に発達する、砂が積もった地形を何というか。", "a": "砂丘"}, {"id": 21, "group": "日本の地形", "badge": "日本の地形", "q": "湾と岬が連続する、出入りの複雑な海岸を何というか。", "a": "リアス海岸"}, {"id": 22, "group": "日本の地形", "badge": "日本の地形", "q": "東北地方の太平洋側にある、リアス海岸で有名な海岸を何というか。", "a": "三陸海岸"}, {"id": 23, "group": "日本の地形", "badge": "日本の地形", "q": "日本近海にある、深さ約200mまでのなだらかな海底を何というか。", "a": "大陸棚"}, {"id": 24, "group": "日本の地形", "badge": "日本の地形", "q": "深さ8000mを超えるような、海底の深いみぞを何というか。", "a": "海溝"}, {"id": 25, "group": "日本の地形", "badge": "日本の地形", "q": "東日本の太平洋沖を流れる暖流を何というか。", "a": "黒潮(日本海流)"}, {"id": 26, "group": "日本の地形", "badge": "日本の地形", "q": "東日本の太平洋沖を流れる寒流を何というか。", "a": "親潮(千島海流)"}, {"id": 27, "group": "日本の地形", "badge": "日本の地形", "q": "黒潮の、もう一つの呼び名は。", "a": "日本海流"}, {"id": 28, "group": "日本の地形", "badge": "日本の地形", "q": "親潮の、もう一つの呼び名は。", "a": "千島海流"}, {"id": 29, "group": "日本の地形", "badge": "日本の地形", "q": "暖流と寒流がぶつかり、好漁場となるところを何というか。", "a": "潮目"}, {"id": 30, "group": "日本の地形", "badge": "日本の地形", "q": "日本海側を流れる暖流を何というか。", "a": "対馬海流"}, {"id": 31, "group": "日本の地形", "badge": "日本の地形", "q": "日本列島は、まわりを海に囲まれた何といえるか。", "a": "島国"}, {"id": 32, "group": "日本の地形", "badge": "日本の地形", "q": "北海道東部にある台地を何というか。", "a": "根釧台地"}, {"id": 33, "group": "日本の地形", "badge": "日本の地形", "q": "赤石山脈は、何という3つの山脈のまとまりの1つか。", "a": "日本アルプス"}, {"id": 34, "group": "日本の地形", "badge": "日本の地形", "q": "日本で火山活動や地震が活発なのは、何に属するからか。", "a": "変動帯"}, {"id": 35, "group": "日本の地形", "badge": "日本の地形", "q": "リアス海岸は、湾と何が連続する海岸か。", "a": "岬"}, {"id": 36, "group": "日本の地形", "badge": "日本の地形", "q": "暖流と寒流がぶつかる潮目は、何が豊かでとれる場所か。", "a": "魚(好漁場)"}, {"id": 37, "group": "日本の地形", "badge": "日本の地形", "q": "扇状地・三角州のうち、川の河口にできるのはどちらか。", "a": "三角州"}, {"id": 38, "group": "日本の地形", "badge": "日本の地形", "q": "扇状地・三角州のうち、山から平地へ出たところにできるのはどちらか。", "a": "扇状地"}, {"id": 39, "group": "アジア", "badge": "アジア", "q": "アジアには熱帯〜寒帯、乾燥気候まであり、何がそろっているといえるか。", "a": "世界の気候"}, {"id": 40, "group": "アジア", "badge": "アジア", "q": "日本の年間降水量の平均はおよそ何mmか。", "a": "1750mm"}, {"id": 41, "group": "アジア", "badge": "アジア", "q": "世界の年間降水量の平均はおよそ何mmか。", "a": "750mm"}, {"id": 42, "group": "アジア", "badge": "アジア", "q": "東アジア〜南アジアで降水量が多いのは、何の影響か。", "a": "季節風(モンスーン)"}, {"id": 43, "group": "アジア", "badge": "アジア", "q": "季節風をカタカナで何というか。", "a": "モンスーン"}, {"id": 44, "group": "アジア", "badge": "アジア", "q": "降水量が少ないのは、西アジアとどこか。", "a": "内陸"}, {"id": 45, "group": "アジア", "badge": "アジア", "q": "降水量が多い東〜南アジアは、人口が多いか少ないか。", "a": "多い"}, {"id": 46, "group": "アジア", "badge": "アジア", "q": "夏の季節風は、海から陸・陸から海のどちらにふくか。", "a": "海から陸"}, {"id": 47, "group": "アジア", "badge": "アジア", "q": "冬の季節風は、海から陸・陸から海のどちらにふくか。", "a": "陸から海"}, {"id": 48, "group": "アジア", "badge": "アジア", "q": "年降水量2000mmほどの地域で栽培される作物を2つ答えよ。", "a": "カカオ・天然ゴム"}, {"id": 49, "group": "アジア", "badge": "アジア", "q": "年降水量1000mmほどの地域でさかんな農業は何か。", "a": "稲作"}, {"id": 50, "group": "アジア", "badge": "アジア", "q": "年降水量500mmほどの地域でさかんな農業は何か。", "a": "麦・畑作"}, {"id": 51, "group": "アジア", "badge": "アジア", "q": "地震や火山活動がさかんな、山地が連なる帯を何というか。", "a": "造山帯"}, {"id": 52, "group": "アジア", "badge": "アジア", "q": "太平洋を取り囲む造山帯を何というか。", "a": "環太平洋造山帯"}, {"id": 53, "group": "アジア", "badge": "アジア", "q": "ヨーロッパからアジアにのびる造山帯を何というか。", "a": "アルプス・ヒマラヤ造山帯"}, {"id": 54, "group": "アジア", "badge": "アジア", "q": "大陸はもとひとつで、分かれて移動したという説を何というか。", "a": "大陸移動説"}, {"id": 55, "group": "アジア", "badge": "アジア", "q": "大陸移動説を唱えたドイツの学者はだれか。", "a": "ウェゲナー"}, {"id": 56, "group": "アジア", "badge": "アジア", "q": "大陸移動説で、もとひとつだったとされる大陸を何というか。", "a": "パンゲア"}, {"id": 57, "group": "アジア", "badge": "アジア", "q": "パンゲアが分かれた北側の大陸を何というか。", "a": "ローラシア大陸"}, {"id": 58, "group": "アジア", "badge": "アジア", "q": "パンゲアが分かれた南側の大陸を何というか。", "a": "ゴンドワナ大陸"}, {"id": 59, "group": "アジア", "badge": "アジア", "q": "ローラシア大陸から分かれた大陸を2つ答えよ。", "a": "ユーラシア大陸・北アメリカ大陸"}, {"id": 60, "group": "アジア", "badge": "アジア", "q": "ゴンドワナ大陸から分かれた大陸を4つ答えよ。", "a": "アフリカ・南アメリカ・オーストラリア・南極"}, {"id": 61, "group": "アジア", "badge": "アジア", "q": "中国の正式名称を答えよ。", "a": "中華人民共和国"}, {"id": 62, "group": "アジア", "badge": "アジア", "q": "中国の東部(臨海部)は、低地・高地のどちらか。", "a": "低地"}, {"id": 63, "group": "アジア", "badge": "アジア", "q": "中国の西部(内陸部)は、低地・高地のどちらか。", "a": "高地"}, {"id": 64, "group": "アジア", "badge": "アジア", "q": "中国北部を流れる大河を何というか。", "a": "黄河"}, {"id": 65, "group": "アジア", "badge": "アジア", "q": "中国中部を流れる、中国最長の川を何というか。", "a": "長江"}, {"id": 66, "group": "アジア", "badge": "アジア", "q": "中国東部に広がる平原を何というか。", "a": "華北平原"}, {"id": 67, "group": "アジア", "badge": "アジア", "q": "稲作のさかんな、中国内陸部の盆地を何というか。", "a": "スーチョワン盆地(四川盆地)"}, {"id": 68, "group": "アジア", "badge": "アジア", "q": "中国の総人口はおよそ何人か。", "a": "14億人"}, {"id": 69, "group": "アジア", "badge": "アジア", "q": "かつて中国で行われた、子どもの数を制限する政策を何というか。", "a": "ひとりっ子政策"}, {"id": 70, "group": "アジア", "badge": "アジア", "q": "ひとりっ子政策の影響で、現在の中国で不足しているものは。", "a": "労働力"}, {"id": 71, "group": "アジア", "badge": "アジア", "q": "多くの民族からなる国家を何というか。", "a": "多民族国家"}, {"id": 72, "group": "アジア", "badge": "アジア", "q": "中国の人口の約90%を占める民族は何か。", "a": "漢民族"}, {"id": 73, "group": "アジア", "badge": "アジア", "q": "中国でイスラム教を信仰する民族は何族か。", "a": "シンチヤンウイグル族"}, {"id": 74, "group": "アジア", "badge": "アジア", "q": "チベット族やモンゴル族が信仰している宗教は何か。", "a": "チベット仏教"}, {"id": 75, "group": "アジア", "badge": "アジア", "q": "中国の政治を一手に担う政党は何か。", "a": "中国共産党"}, {"id": 76, "group": "アジア", "badge": "アジア", "q": "中国の現在の国家主席はだれか。", "a": "習近平"}, {"id": 77, "group": "アジア", "badge": "アジア", "q": "中国で多く産出され、CO2排出の原因にもなる資源は。", "a": "石炭"}, {"id": 78, "group": "アジア", "badge": "アジア", "q": "2000年頃に急成長した中国が呼ばれるようになった言葉は。", "a": "世界の工場"}, {"id": 79, "group": "アジア", "badge": "アジア", "q": "中国で問題となっている、内陸部と臨海部の差を何というか。", "a": "経済格差"}, {"id": 80, "group": "アジア", "badge": "アジア", "q": "中国の経済格差で、所得が高いのは西部・東部どちらか。", "a": "東部(臨海部)"}, {"id": 81, "group": "アジア", "badge": "アジア", "q": "中国の首都はどこか。", "a": "北京(ペキン)"}, {"id": 82, "group": "アジア", "badge": "アジア", "q": "中国最大の都市はどこか。", "a": "上海(シャンハイ)"}, {"id": 83, "group": "アジア", "badge": "アジア", "q": "イギリスから中国へ返還された都市はどこか。", "a": "香港(ホンコン)"}, {"id": 84, "group": "アジア", "badge": "アジア", "q": "香港がイギリスから中国に返還されたのは何年か。", "a": "1997年 ※ノートは1999年"}, {"id": 85, "group": "アジア", "badge": "アジア", "q": "中国の歴史都市として知られる、かつての都はどこか。", "a": "西安(シーアン)"}, {"id": 86, "group": "アジア", "badge": "アジア", "q": "茶の産地として有名な中国の省はどこか。", "a": "福建省"}, {"id": 87, "group": "アジア", "badge": "アジア", "q": "1年に同じ田で2回米を作ることを何というか。", "a": "二期作"}, {"id": 88, "group": "アジア", "badge": "アジア", "q": "玄武岩からなり、綿花栽培がさかんなインドの高原は。", "a": "デカン高原"}, {"id": 89, "group": "アジア", "badge": "アジア", "q": "ガンジス川が流れ、稲作がさかんなインドの平原は。", "a": "ヒンドスタン平原"}, {"id": 90, "group": "アジア", "badge": "アジア", "q": "ヒンドスタン平原を流れる大河を何というか。", "a": "ガンジス川"}, {"id": 91, "group": "アジア", "badge": "アジア", "q": "インドの南にある島を何というか。", "a": "セイロン島"}, {"id": 92, "group": "アジア", "badge": "アジア", "q": "世界三大洋のうち、インドの南に広がる海洋は。", "a": "インド洋"}, {"id": 93, "group": "アジア", "badge": "アジア", "q": "インド洋以外の世界三大洋を2つ答えよ。", "a": "太平洋・大西洋"}, {"id": 94, "group": "アジア", "badge": "アジア", "q": "古代四大文明の一つがおこり、小麦の産地でもある平原は。", "a": "インダス平原"}, {"id": 95, "group": "アジア", "badge": "アジア", "q": "インドの東、緯度10度付近にある、サイクロンの被害を受ける湾は。", "a": "ベンガル湾"}, {"id": 96, "group": "アジア", "badge": "アジア", "q": "ベンガル湾などでおこる熱帯低気圧を何というか。", "a": "サイクロン"}, {"id": 97, "group": "アジア", "badge": "アジア", "q": "インドの気候に強い影響をあたえるものは何か。", "a": "モンスーン(季節風)"}, {"id": 98, "group": "アジア", "badge": "アジア", "q": "インドの夏の季節風の風向と気候を答えよ。", "a": "南西風・高温多湿"}, {"id": 99, "group": "アジア", "badge": "アジア", "q": "インドの冬の季節風の風向と気候を答えよ。", "a": "北東風・寒冷乾燥"}, {"id": 100, "group": "アジア", "badge": "アジア", "q": "インドで人口の約90%が信仰する多神教の宗教は。", "a": "ヒンズー教"}, {"id": 101, "group": "アジア", "badge": "アジア", "q": "ヒンズー教で食べることが禁止されている肉は。", "a": "牛(牛肉)"}, {"id": 102, "group": "アジア", "badge": "アジア", "q": "インドで人口の約10%が信仰し、アッラーを神とする宗教は。", "a": "イスラム教"}, {"id": 103, "group": "アジア", "badge": "アジア", "q": "イスラム教で食べることが禁止されている肉は。", "a": "豚(豚肉)"}, {"id": 104, "group": "アジア", "badge": "アジア", "q": "ヒンズー教・イスラム教以外のインドの宗教を1つ答えよ。", "a": "シーク教"}, {"id": 105, "group": "アジア", "badge": "アジア", "q": "インドで最も多く使われる公用語は何か。", "a": "ヒンディー語"}, {"id": 106, "group": "アジア", "badge": "アジア", "q": "インド南部で使われる言語を何というか。", "a": "ドラビダ語"}, {"id": 107, "group": "アジア", "badge": "アジア", "q": "インドの古くからの身分制度を何というか。", "a": "カースト制"}, {"id": 108, "group": "アジア", "badge": "アジア", "q": "インドとパキスタンが領有を争っている地方は。", "a": "カシミール地方"}, {"id": 109, "group": "アジア", "badge": "アジア", "q": "スリランカで対立しているのは、仏教徒と何教徒か。", "a": "ヒンズー教徒"}, {"id": 110, "group": "アジア", "badge": "アジア", "q": "綿花の主な産地であるインドの高原は。", "a": "デカン高原"}, {"id": 111, "group": "アジア", "badge": "アジア", "q": "インドで茶の栽培がさかんな北東部の地方は。", "a": "アッサム地方"}, {"id": 112, "group": "アジア", "badge": "アジア", "q": "アッサム地方の茶の中心都市はどこか。", "a": "ダージリン"}, {"id": 113, "group": "アジア", "badge": "アジア", "q": "茶の産地セイロン島は、現在の何という国か。", "a": "スリランカ"}, {"id": 114, "group": "アジア", "badge": "アジア", "q": "インドでさかんな、麻の一種の作物を何というか。", "a": "ジュート(麻)"}, {"id": 115, "group": "アジア", "badge": "アジア", "q": "インドの首都はどこか。", "a": "デリー(ニューデリー)"}, {"id": 116, "group": "アジア", "badge": "アジア", "q": "ITで発展したインド南部の都市はどこか。", "a": "バンガロール"}, {"id": 117, "group": "アジア", "badge": "アジア", "q": "ガンジス川下流にあるインドの都市はどこか。", "a": "コルカタ"}, {"id": 118, "group": "アジア", "badge": "アジア", "q": "パキスタンの首都はどこか。", "a": "イスラマバード"}, {"id": 119, "group": "アジア", "badge": "アジア", "q": "ネパールの首都はどこか。", "a": "カトマンズ"}, {"id": 120, "group": "アジア", "badge": "アジア", "q": "バングラデシュの首都はどこか。", "a": "ダッカ"}, {"id": 121, "group": "アジア", "badge": "アジア", "q": "スリランカの首都はどこか。", "a": "スリジャヤワルダナプラコッテ"}, {"id": 122, "group": "アジア", "badge": "アジア", "q": "朝鮮半島北側の、社会主義国の正式名称は。", "a": "朝鮮民主主義人民共和国"}, {"id": 123, "group": "アジア", "badge": "アジア", "q": "第二次世界大戦が終わったのは何年か。", "a": "1945年"}, {"id": 124, "group": "アジア", "badge": "アジア", "q": "1977〜1983年に起きた、北朝鮮による日本人拉致は何回か。", "a": "12回"}, {"id": 125, "group": "アジア", "badge": "アジア", "q": "北朝鮮が開発したミサイルの名前を1つ答えよ。", "a": "テポドン"}, {"id": 126, "group": "アジア", "badge": "アジア", "q": "1894年に起こり、台湾が日本の植民地となるきっかけの戦争は。", "a": "日清戦争"}, {"id": 127, "group": "アジア", "badge": "アジア", "q": "日清戦争の後、日本の植民地となった地域はどこか。", "a": "台湾"}, {"id": 128, "group": "アジア", "badge": "アジア", "q": "戦後、中国共産党と争った資本主義の政党は何か。", "a": "中国国民党"}, {"id": 129, "group": "アジア", "badge": "アジア", "q": "戦後、中国国民党が台湾に建てた国の名前は。", "a": "中華民国"}, {"id": 130, "group": "アジア", "badge": "アジア", "q": "中国共産党が大陸に建てた国の名前は。", "a": "中華人民共和国"}, {"id": 131, "group": "アジア", "badge": "アジア", "q": "中国共産党は社会主義・資本主義のどちらの立場か。", "a": "社会主義"}, {"id": 132, "group": "アジア", "badge": "アジア", "q": "中国国民党は社会主義・資本主義のどちらの立場か。", "a": "資本主義"}, {"id": 133, "group": "アジア", "badge": "アジア", "q": "1392〜1897年まで続いた朝鮮の王朝を何というか。", "a": "李氏朝鮮"}, {"id": 134, "group": "アジア", "badge": "アジア", "q": "李氏朝鮮に出兵した日本の武将はだれか。", "a": "豊臣秀吉"}, {"id": 135, "group": "アジア", "badge": "アジア", "q": "1894年に起きた、日本と清の戦争を何というか。", "a": "日清戦争"}, {"id": 136, "group": "アジア", "badge": "アジア", "q": "1904年に起きた、日本とロシアの戦争を何というか。", "a": "日露戦争"}, {"id": 137, "group": "アジア", "badge": "アジア", "q": "1910年に日本が韓国を併合したことを何というか。", "a": "日韓併合"}, {"id": 138, "group": "アジア", "badge": "アジア", "q": "1945年の終戦で、朝鮮は何から解放されたか。", "a": "日本の支配(植民地支配)"}, {"id": 139, "group": "アジア", "badge": "アジア", "q": "冷戦体制で、資本主義の立場をとった南側の国は。", "a": "大韓民国"}, {"id": 140, "group": "アジア", "badge": "アジア", "q": "冷戦体制で、社会主義の立場をとった北側の国は。", "a": "朝鮮民主主義人民共和国"}, {"id": 141, "group": "アジア", "badge": "アジア", "q": "1950年に始まった南北朝鮮間の戦争を何というか。", "a": "朝鮮戦争"}, {"id": 142, "group": "アジア", "badge": "アジア", "q": "朝鮮戦争の休戦協定が結ばれたのは何年か。", "a": "1953年 ※ノートは1954年"}, {"id": 143, "group": "アジア", "badge": "アジア", "q": "韓国で1960年にさかんだった工業は何か。", "a": "せんい工業"}, {"id": 144, "group": "アジア", "badge": "アジア", "q": "韓国で1970年に発展した工業を答えよ。", "a": "鉄鋼・造船・自動車"}, {"id": 145, "group": "アジア", "badge": "アジア", "q": "韓国で1990年以降に発展した、半導体やスマホの工業は。", "a": "半導体(電子)工業"}, {"id": 146, "group": "アジア", "badge": "アジア", "q": "韓国の首都はどこか。", "a": "ソウル"}, {"id": 147, "group": "アジア", "badge": "アジア", "q": "韓国第2の都市で、日本の玄関口とされる都市は。", "a": "プサン(釜山)"}, {"id": 148, "group": "アジア", "badge": "アジア", "q": "韓国の民族衣装を何というか。", "a": "チマ・チョゴリ"}, {"id": 149, "group": "アジア", "badge": "アジア", "q": "韓国独自の文字を何というか。", "a": "ハングル文字"}, {"id": 150, "group": "アジア", "badge": "アジア", "q": "発酵させた野菜の韓国料理を何というか。", "a": "キムチ"}, {"id": 151, "group": "アジア", "badge": "アジア", "q": "韓国の伝統的な床暖房を何というか。", "a": "オンドル"}, {"id": 152, "group": "アジア", "badge": "アジア", "q": "米の生産量が世界第1位の国はどこか。", "a": "中国"}, {"id": 153, "group": "アジア", "badge": "アジア", "q": "米の生産量が世界第2位の国はどこか。", "a": "インド"}, {"id": 154, "group": "アジア", "badge": "アジア", "q": "小麦の生産量が世界第1位の国はどこか。", "a": "中国"}, {"id": 155, "group": "アジア", "badge": "アジア", "q": "石炭の産出量が世界第1位(約58%)の国はどこか。", "a": "中国"}, {"id": 156, "group": "アジア", "badge": "アジア", "q": "機械類の輸出額が世界第1位の国はどこか。", "a": "中国"}, {"id": 157, "group": "アジア", "badge": "アジア", "q": "自動車の生産台数が世界第1位の国はどこか。", "a": "中国"}, {"id": 158, "group": "アジア", "badge": "アジア", "q": "産業用ロボットの稼働台数が世界第1位の国はどこか。", "a": "中国"}, {"id": 159, "group": "アジア", "badge": "アジア", "q": "船舶竣工量が世界第1位の国はどこか。", "a": "中国"}, {"id": 160, "group": "アジア", "badge": "アジア", "q": "「世界の工場」と呼ばれる国はどこか。", "a": "中国"}, {"id": 161, "group": "アジア", "badge": "アジア", "q": "デカン高原で栽培がさかんな作物は何か。", "a": "綿花"}, {"id": 162, "group": "アジア", "badge": "アジア", "q": "ヒンドスタン平原でさかんな農業は何か。", "a": "稲作"}, {"id": 163, "group": "アジア", "badge": "アジア", "q": "インダス平原でさかんに作られる作物は何か。", "a": "小麦"}, {"id": 164, "group": "アジア", "badge": "アジア", "q": "牛肉を食べないのは、ヒンズー教・イスラム教どちらか。", "a": "ヒンズー教"}, {"id": 165, "group": "アジア", "badge": "アジア", "q": "豚肉を食べないのは、ヒンズー教・イスラム教どちらか。", "a": "イスラム教"}, {"id": 166, "group": "アジア", "badge": "アジア", "q": "ウェゲナーが唱えたのは何という説か。", "a": "大陸移動説"}, {"id": 167, "group": "アジア", "badge": "アジア", "q": "北京・上海・香港のうち、中国の首都はどれか。", "a": "北京"}, {"id": 168, "group": "アジア", "badge": "アジア", "q": "北京・上海・香港のうち、中国最大の都市はどれか。", "a": "上海"}, {"id": 169, "group": "アジア", "badge": "アジア", "q": "ソウル・プサンのうち、韓国の首都はどれか。", "a": "ソウル"}, {"id": 170, "group": "アジア", "badge": "アジア", "q": "中華人民共和国・中華民国のうち、台湾の国名はどれか。", "a": "中華民国"}, {"id": 171, "group": "アジア", "badge": "アジア", "q": "社会主義国は、大韓民国・北朝鮮のどちらか。", "a": "北朝鮮"}, {"id": 172, "group": "アジア", "badge": "アジア", "q": "資本主義国は、大韓民国・北朝鮮のどちらか。", "a": "大韓民国"}, {"id": 173, "group": "アジア", "badge": "アジア", "q": "日清戦争が起きたのは何年か。", "a": "1894年"}, {"id": 174, "group": "アジア", "badge": "アジア", "q": "日露戦争が起きたのは何年か。", "a": "1904年"}, {"id": 175, "group": "アジア", "badge": "アジア", "q": "日韓併合が行われたのは何年か。", "a": "1910年"}, {"id": 176, "group": "アジア", "badge": "アジア", "q": "朝鮮戦争が始まったのは何年か。", "a": "1950年"}, {"id": 177, "group": "アジア", "badge": "アジア", "q": "アジアのモンスーン地帯にあたるのは、東〜南アジア・西アジアどちらか。", "a": "東〜南アジア"}, {"id": 178, "group": "アジア", "badge": "アジア", "q": "玄武岩でできたインドの高原を何というか。", "a": "デカン高原"}, {"id": 179, "group": "アジア", "badge": "アジア", "q": "古代四大文明がおこったインドの平原は。", "a": "インダス平原"}]}, "rikaA": {"name": "理科α 化学", "icon": "⚗️", "key": "rika_alpha_game_v1", "theme": {"paper": "#f1edf4", "main": "#6a4d9c", "mainD": "#46326f", "gold": "#c9a23f", "line": "#d8cfe2", "good": "#4a8f5e", "again": "#b4502a", "petA": "#efe9f6", "petB": "#e8dff2"}, "filters": [["ぜんぶ", "all"], ["記号", "元素・記号"], ["気体", "気体"], ["物質", "物質・密度"]], "groupColors": {"元素・記号": {"bg": "#ece4f5", "fg": "#46326f"}, "気体": {"bg": "#dfeef0", "fg": "#1f6f7b"}, "物質・密度": {"bg": "#f4ead4", "fg": "#8a6420"}}, "stages": [{"pt": 0, "emoji": "🪨", "name": "みならい", "word": "石ころから はじまる"}, {"pt": 15, "emoji": "⚗️", "name": "駆け出し錬金術師", "word": "フラスコを 手にした"}, {"pt": 40, "emoji": "🧪", "name": "錬金術師", "word": "薬品を あやつる"}, {"pt": 80, "emoji": "🔮", "name": "上級錬金術師", "word": "ひかる玉を 生み出した"}, {"pt": 140, "emoji": "💎", "name": "賢者見習い", "word": "宝石を つくれる"}, {"pt": 210, "emoji": "🏆", "name": "賢者", "word": "みなに たよられる"}, {"pt": 300, "emoji": "🌟", "name": "伝説の錬金術師", "word": "賢者の石を 完成させた！"}], "cards": [{"id": 0, "group": "物質・密度", "badge": "物質・原子", "q": "物の材料に着目した呼び方を何というか。", "a": "物質"}, {"id": 1, "group": "物質・密度", "badge": "物質・原子", "q": "使う目的や形に着目した呼び方を何というか。", "a": "物体"}, {"id": 2, "group": "物質・密度", "badge": "物質・原子", "q": "木の机で、「木」は物質・物体のどちらか。", "a": "物質"}, {"id": 3, "group": "物質・密度", "badge": "物質・原子", "q": "木の机で、「机」は物質・物体のどちらか。", "a": "物体"}, {"id": 4, "group": "物質・密度", "badge": "物質・原子", "q": "コップは物質・物体のどちらか。", "a": "物体"}, {"id": 5, "group": "物質・密度", "badge": "物質・原子", "q": "ガラスやプラスチックは物質・物体のどちらか。", "a": "物質"}, {"id": 6, "group": "物質・密度", "badge": "物質・原子", "q": "すべての物質をつくる、これ以上分けられない最小の粒子を何というか。", "a": "原子"}, {"id": 7, "group": "物質・密度", "badge": "物質・原子", "q": "原子の種類のことを何というか。", "a": "元素"}, {"id": 8, "group": "物質・密度", "badge": "物質・原子", "q": "原子が複数個結合したものを何というか。", "a": "分子"}, {"id": 9, "group": "物質・密度", "badge": "物質・原子", "q": "元素は現在、約何種類知られているか。", "a": "約120種類"}, {"id": 10, "group": "物質・密度", "badge": "物質・原子", "q": "元素をアルファベットで表したものを何というか。", "a": "元素記号"}, {"id": 11, "group": "元素・記号", "badge": "記号(名→記)", "q": "ナトリウムの元素記号は。", "a": "Na"}, {"id": 12, "group": "元素・記号", "badge": "記号(名→記)", "q": "マグネシウムの元素記号は。", "a": "Mg"}, {"id": 13, "group": "元素・記号", "badge": "記号(名→記)", "q": "アルミニウムの元素記号は。", "a": "Al"}, {"id": 14, "group": "元素・記号", "badge": "記号(名→記)", "q": "カルシウムの元素記号は。", "a": "Ca"}, {"id": 15, "group": "元素・記号", "badge": "記号(名→記)", "q": "鉄の元素記号は。", "a": "Fe"}, {"id": 16, "group": "元素・記号", "badge": "記号(名→記)", "q": "銅の元素記号は。", "a": "Cu"}, {"id": 17, "group": "元素・記号", "badge": "記号(名→記)", "q": "銀の元素記号は。", "a": "Ag"}, {"id": 18, "group": "元素・記号", "badge": "記号(名→記)", "q": "水素の元素記号は。", "a": "H"}, {"id": 19, "group": "元素・記号", "badge": "記号(名→記)", "q": "炭素の元素記号は。", "a": "C"}, {"id": 20, "group": "元素・記号", "badge": "記号(名→記)", "q": "酸素の元素記号は。", "a": "O"}, {"id": 21, "group": "元素・記号", "badge": "記号(名→記)", "q": "窒素の元素記号は。", "a": "N"}, {"id": 22, "group": "元素・記号", "badge": "記号(名→記)", "q": "硫黄の元素記号は。", "a": "S"}, {"id": 23, "group": "元素・記号", "badge": "記号(名→記)", "q": "亜鉛の元素記号は。", "a": "Zn"}, {"id": 24, "group": "元素・記号", "badge": "記号(名→記)", "q": "塩素の元素記号は。", "a": "Cl"}, {"id": 25, "group": "元素・記号", "badge": "記号(記→名)", "q": "Na は何という元素か。", "a": "ナトリウム"}, {"id": 26, "group": "元素・記号", "badge": "記号(記→名)", "q": "Mg は何という元素か。", "a": "マグネシウム"}, {"id": 27, "group": "元素・記号", "badge": "記号(記→名)", "q": "Al は何という元素か。", "a": "アルミニウム"}, {"id": 28, "group": "元素・記号", "badge": "記号(記→名)", "q": "Ca は何という元素か。", "a": "カルシウム"}, {"id": 29, "group": "元素・記号", "badge": "記号(記→名)", "q": "Fe は何という元素か。", "a": "鉄"}, {"id": 30, "group": "元素・記号", "badge": "記号(記→名)", "q": "Cu は何という元素か。", "a": "銅"}, {"id": 31, "group": "元素・記号", "badge": "記号(記→名)", "q": "Ag は何という元素か。", "a": "銀"}, {"id": 32, "group": "元素・記号", "badge": "記号(記→名)", "q": "H は何という元素か。", "a": "水素"}, {"id": 33, "group": "元素・記号", "badge": "記号(記→名)", "q": "C は何という元素か。", "a": "炭素"}, {"id": 34, "group": "元素・記号", "badge": "記号(記→名)", "q": "O は何という元素か。", "a": "酸素"}, {"id": 35, "group": "元素・記号", "badge": "記号(記→名)", "q": "N は何という元素か。", "a": "窒素"}, {"id": 36, "group": "元素・記号", "badge": "記号(記→名)", "q": "S は何という元素か。", "a": "硫黄"}, {"id": 37, "group": "元素・記号", "badge": "記号(記→名)", "q": "Zn は何という元素か。", "a": "亜鉛"}, {"id": 38, "group": "元素・記号", "badge": "記号(記→名)", "q": "Cl は何という元素か。", "a": "塩素"}, {"id": 39, "group": "物質・密度", "badge": "有機・無機", "q": "炭素を含み、燃えると二酸化炭素を生じる物質を何というか。", "a": "有機物"}, {"id": 40, "group": "物質・密度", "badge": "有機・無機", "q": "有機物以外の、炭素を含まない物質を何というか。", "a": "無機物"}, {"id": 41, "group": "物質・密度", "badge": "有機・無機", "q": "紙が燃えると二酸化炭素が発生するのはなぜか。", "a": "炭素が含まれているから"}, {"id": 42, "group": "物質・密度", "badge": "有機・無機", "q": "有機物は（　　）を必ず含み、燃えると（　　）を生じる。", "a": "炭素／二酸化炭素"}, {"id": 43, "group": "物質・密度", "badge": "有機・無機", "q": "無機物は有機物以外の物質で、（　　）を含まない物質である。", "a": "炭素"}, {"id": 44, "group": "物質・密度", "badge": "有機・無機", "q": "有機物が燃えたとき、必ず発生する気体は何か。", "a": "二酸化炭素"}, {"id": 45, "group": "物質・密度", "badge": "有機・無機", "q": "ほとんどの有機物は水素を含むため、燃えると何が発生するか。", "a": "水(水蒸気)"}, {"id": 46, "group": "物質・密度", "badge": "有機・無機", "q": "紙を燃やすと石灰水はどうなるか。", "a": "白くにごる"}, {"id": 47, "group": "物質・密度", "badge": "有機・無機", "q": "スチールウール(鉄)を燃やすと石灰水はどうなるか。", "a": "にごらない"}, {"id": 48, "group": "物質・密度", "badge": "有機・無機", "q": "二酸化炭素・一酸化炭素・炭酸カルシウムは、炭素を含むが何に分類されるか。", "a": "無機物"}, {"id": 49, "group": "物質・密度", "badge": "有機・無機", "q": "砂糖・紙・発泡スチロールは有機物・無機物のどちらか。", "a": "有機物"}, {"id": 50, "group": "物質・密度", "badge": "有機・無機", "q": "食塩・鉄は有機物・無機物のどちらか。", "a": "無機物"}, {"id": 51, "group": "物質・密度", "badge": "金属", "q": "電気をよく通す金属の性質を何というか。", "a": "電気伝導性"}, {"id": 52, "group": "物質・密度", "badge": "金属", "q": "熱をよく伝える金属の性質を何というか。", "a": "熱伝導性"}, {"id": 53, "group": "物質・密度", "badge": "金属", "q": "みがくと特有の光沢が出る金属の性質を何というか。", "a": "金属光沢"}, {"id": 54, "group": "物質・密度", "badge": "金属", "q": "たたくと広がる金属の性質を何というか。", "a": "展性"}, {"id": 55, "group": "物質・密度", "badge": "金属", "q": "引っ張るとのびる金属の性質を何というか。", "a": "延性"}, {"id": 56, "group": "物質・密度", "badge": "金属", "q": "金属がこれらの性質をもつのは、何を持つからか。", "a": "自由電子"}, {"id": 57, "group": "物質・密度", "badge": "金属", "q": "金属以外の物質を何というか。", "a": "非金属"}, {"id": 58, "group": "物質・密度", "badge": "金属", "q": "「磁石につく」はすべての金属に共通の性質か。", "a": "共通ではない(鉄などだけ)"}, {"id": 59, "group": "物質・密度", "badge": "密度", "q": "1cm³あたりの質量を何というか。", "a": "密度"}, {"id": 60, "group": "物質・密度", "badge": "密度", "q": "密度を求める式を書け。", "a": "密度＝質量÷体積"}, {"id": 61, "group": "物質・密度", "badge": "密度", "q": "密度の単位を書け。", "a": "g/cm³"}, {"id": 62, "group": "物質・密度", "badge": "密度", "q": "1cm³は何mLか。", "a": "1mL"}, {"id": 63, "group": "物質・密度", "badge": "密度", "q": "質量44.8g・体積5cm³の物質の密度は。", "a": "8.96 g/cm³"}, {"id": 64, "group": "物質・密度", "badge": "密度", "q": "密度2.7g/cm³・質量29.7gのときの体積は。", "a": "11 cm³"}, {"id": 65, "group": "物質・密度", "badge": "密度", "q": "体積43.2cm³・密度0.90g/cm³のときの質量は。", "a": "38.88 g"}, {"id": 66, "group": "物質・密度", "badge": "密度", "q": "質量394g・体積50cm³の金属の密度は(小数第2位まで)。", "a": "7.88 g/cm³"}, {"id": 67, "group": "物質・密度", "badge": "密度", "q": "密度7.88g/cm³の金属は何と推定されるか(鉄7.87)。", "a": "鉄"}, {"id": 68, "group": "物質・密度", "badge": "密度", "q": "体積40cm³・質量108gの物質の密度は。", "a": "2.70 g/cm³"}, {"id": 69, "group": "物質・密度", "badge": "密度", "q": "密度2.70g/cm³の物質は何と考えられるか。", "a": "アルミニウム"}, {"id": 70, "group": "物質・密度", "badge": "密度", "q": "同じ質量で体積が大きいのは、密度が大きい・小さいどちらの物か。", "a": "小さい"}, {"id": 71, "group": "物質・密度", "badge": "密度", "q": "同じ体積で質量が大きいのは、密度が大きい・小さいどちらの物か。", "a": "大きい"}, {"id": 72, "group": "物質・密度", "badge": "密度", "q": "質量と体積のグラフで、縦軸は何か。", "a": "質量"}, {"id": 73, "group": "物質・密度", "badge": "密度", "q": "質量と体積のグラフで、横軸は何か。", "a": "体積"}, {"id": 74, "group": "物質・密度", "badge": "浮き沈み", "q": "物体は、液体よりも密度が大きいと浮くか沈むか。", "a": "沈む"}, {"id": 75, "group": "物質・密度", "badge": "浮き沈み", "q": "氷が水に浮くのは、氷の密度が水より大きい・小さいどちらだからか。", "a": "小さい"}, {"id": 76, "group": "物質・密度", "badge": "浮き沈み", "q": "鉄は水銀に浮くか沈むか。", "a": "浮く"}, {"id": 77, "group": "物質・密度", "badge": "浮き沈み", "q": "食用油は水に浮くか沈むか。", "a": "浮く"}, {"id": 78, "group": "物質・密度", "badge": "浮き沈み", "q": "液体の体積をはかる道具を何というか。", "a": "メスシリンダー"}, {"id": 79, "group": "物質・密度", "badge": "浮き沈み", "q": "メスシリンダーで、液面のへこんだ面を何というか。", "a": "メニスカス"}, {"id": 80, "group": "物質・密度", "badge": "浮き沈み", "q": "メスシリンダーは最小目盛りの何分の1まで読むか。", "a": "1/10"}, {"id": 81, "group": "物質・密度", "badge": "浮き沈み", "q": "メスシリンダーの目盛りは、真横・真上どちらから見るか。", "a": "真横(水平)"}, {"id": 82, "group": "物質・密度", "badge": "浮き沈み", "q": "金属を入れて体積が24.8→35.0cm³になった。金属の体積は。", "a": "10.2 cm³"}, {"id": 83, "group": "物質・密度", "badge": "プラスチック", "q": "プラスチックは主に何から作られるか。", "a": "石油"}, {"id": 84, "group": "物質・密度", "badge": "プラスチック", "q": "プラスチックは金属に比べて軽いか重いか。", "a": "軽い"}, {"id": 85, "group": "物質・密度", "badge": "プラスチック", "q": "プラスチックは電気を通しやすいか通しにくいか。", "a": "通しにくい"}, {"id": 86, "group": "物質・密度", "badge": "プラスチック", "q": "プラスチックは加工しやすいか、しにくいか。", "a": "しやすい"}, {"id": 87, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレンの略語は。", "a": "PE"}, {"id": 88, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレン(PE)は水に浮くか沈むか。", "a": "浮く"}, {"id": 89, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレン(PE)は燃えやすいか燃えにくいか。", "a": "燃えやすい"}, {"id": 90, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレン(PE)の主な用途は。", "a": "バケツ・袋・容器"}, {"id": 91, "group": "物質・密度", "badge": "プラスチック", "q": "ポリプロピレンの略語は。", "a": "PP"}, {"id": 92, "group": "物質・密度", "badge": "プラスチック", "q": "ポリプロピレン(PP)は水に浮くか沈むか。", "a": "浮く"}, {"id": 93, "group": "物質・密度", "badge": "プラスチック", "q": "ポリプロピレン(PP)は燃えやすいか燃えにくいか。", "a": "燃えやすい"}, {"id": 94, "group": "物質・密度", "badge": "プラスチック", "q": "ポリプロピレン(PP)の主な用途は。", "a": "食品容器・風呂用品"}, {"id": 95, "group": "物質・密度", "badge": "プラスチック", "q": "PET の正式名称は。", "a": "ポリエチレンテレフタラート"}, {"id": 96, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレンテレフタラート(PET)は水に浮くか沈むか。", "a": "沈む"}, {"id": 97, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレンテレフタラート(PET)は燃えやすいか燃えにくいか。", "a": "燃えにくい"}, {"id": 98, "group": "物質・密度", "badge": "プラスチック", "q": "ポリエチレンテレフタラート(PET)の主な用途は。", "a": "ペットボトル・卵パック"}, {"id": 99, "group": "物質・密度", "badge": "プラスチック", "q": "ポリスチレンの略語は。", "a": "PS"}, {"id": 100, "group": "物質・密度", "badge": "プラスチック", "q": "ポリスチレン(PS)は水に浮くか沈むか。", "a": "沈む"}, {"id": 101, "group": "物質・密度", "badge": "プラスチック", "q": "ポリスチレン(PS)は燃えやすいか燃えにくいか。", "a": "燃えやすい"}, {"id": 102, "group": "物質・密度", "badge": "プラスチック", "q": "ポリスチレン(PS)の主な用途は。", "a": "CDケース・断熱材"}, {"id": 103, "group": "物質・密度", "badge": "プラスチック", "q": "ポリ塩化ビニルの略語は。", "a": "PVC"}, {"id": 104, "group": "物質・密度", "badge": "プラスチック", "q": "ポリ塩化ビニル(PVC)は水に浮くか沈むか。", "a": "沈む"}, {"id": 105, "group": "物質・密度", "badge": "プラスチック", "q": "ポリ塩化ビニル(PVC)は燃えやすいか燃えにくいか。", "a": "燃えにくい"}, {"id": 106, "group": "物質・密度", "badge": "プラスチック", "q": "ポリ塩化ビニル(PVC)の主な用途は。", "a": "消しゴム・水道管"}, {"id": 107, "group": "気体", "badge": "気体の集め方", "q": "分子を、構成する原子の元素記号で表したものを何というか。", "a": "分子式"}, {"id": 108, "group": "気体", "badge": "気体の集め方", "q": "水の分子式を書け。", "a": "H2O"}, {"id": 109, "group": "気体", "badge": "気体の集め方", "q": "二酸化炭素の分子式を書け。", "a": "CO2"}, {"id": 110, "group": "気体", "badge": "気体の集め方", "q": "分子式で、原子の数は元素記号の上・下どちらに書くか。", "a": "下"}, {"id": 111, "group": "気体", "badge": "気体の集め方", "q": "分子式で、原子の数が1個のときは数字を書くか。", "a": "書かない"}, {"id": 112, "group": "気体", "badge": "気体の集め方", "q": "気体を集める3つの方法を答えよ。", "a": "水上置換法・下方置換法・上方置換法"}, {"id": 113, "group": "気体", "badge": "気体の集め方", "q": "水にとけにくい気体を集める方法は。", "a": "水上置換法"}, {"id": 114, "group": "気体", "badge": "気体の集め方", "q": "水にとけやすく、空気より密度が大きい気体を集める方法は。", "a": "下方置換法"}, {"id": 115, "group": "気体", "badge": "気体の集め方", "q": "水にとけやすく、空気より密度が小さい気体を集める方法は。", "a": "上方置換法"}, {"id": 116, "group": "気体", "badge": "気体の性質", "q": "酸素の化学式は。", "a": "O2"}, {"id": 117, "group": "気体", "badge": "気体の性質", "q": "酸素の発生法で、過酸化水素水を加える物質は何か。", "a": "二酸化マンガン"}, {"id": 118, "group": "気体", "badge": "気体の性質", "q": "二酸化マンガンに加えて酸素を発生させる液体は何か。", "a": "過酸化水素水"}, {"id": 119, "group": "気体", "badge": "気体の性質", "q": "過酸化水素水が分解すると、酸素と何ができるか。", "a": "水"}, {"id": 120, "group": "気体", "badge": "気体の性質", "q": "二酸化マンガンのように、自身は変化せず反応を助けるものを何というか。", "a": "触媒"}, {"id": 121, "group": "気体", "badge": "気体の性質", "q": "酸化銀を加熱して熱分解すると、酸素と何ができるか。", "a": "銀"}, {"id": 122, "group": "気体", "badge": "気体の性質", "q": "他の物質の燃焼を助ける酸素の性質を何というか。", "a": "助燃性"}, {"id": 123, "group": "気体", "badge": "気体の性質", "q": "酸素は水にとけやすいか、とけにくいか。", "a": "とけにくい"}, {"id": 124, "group": "気体", "badge": "気体の性質", "q": "酸素は何で集めるか。", "a": "水上置換法"}, {"id": 125, "group": "気体", "badge": "気体の性質", "q": "酸素は空気より少し重いか、少し軽いか。", "a": "少し重い(1.4g/L)"}, {"id": 126, "group": "気体", "badge": "気体の性質", "q": "火のついた線香を酸素に入れるとどうなるか。", "a": "炎をだして激しく燃える"}, {"id": 127, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素の化学式は。", "a": "CO2"}, {"id": 128, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素の発生法で、薄い塩酸を加える物質は何か。", "a": "石灰石(炭酸カルシウム)"}, {"id": 129, "group": "気体", "badge": "気体の性質", "q": "石灰石(炭酸カルシウム)に何を加えると二酸化炭素が発生するか。", "a": "薄い塩酸"}, {"id": 130, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素の発生法で、加熱して熱分解する物質は何か。", "a": "炭酸水素ナトリウム"}, {"id": 131, "group": "気体", "badge": "気体の性質", "q": "炭酸水素ナトリウムを加熱すると、炭酸ナトリウム・水と何ができるか。", "a": "二酸化炭素"}, {"id": 132, "group": "気体", "badge": "気体の性質", "q": "炭酸水素ナトリウムを加熱すると、炭酸ナトリウム・二酸化炭素のほかに何ができるか。", "a": "水"}, {"id": 133, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素は水に少しとけるか、とけないか。", "a": "少しとける"}, {"id": 134, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素は何で集めるか。", "a": "下方置換法"}, {"id": 135, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素が水に溶けたものを何というか。", "a": "炭酸(水)"}, {"id": 136, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素の水溶液は何性か。", "a": "酸性"}, {"id": 137, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素は空気より重いか軽いか。", "a": "重い(1.8g/L)"}, {"id": 138, "group": "気体", "badge": "気体の性質", "q": "二酸化炭素を石灰水に通すとどうなるか。", "a": "白くにごる"}, {"id": 139, "group": "気体", "badge": "気体の性質", "q": "BTB溶液が酸性のときの色は。", "a": "黄色"}, {"id": 140, "group": "気体", "badge": "気体の性質", "q": "BTB溶液が中性のときの色は。", "a": "緑色"}, {"id": 141, "group": "気体", "badge": "気体の性質", "q": "BTB溶液がアルカリ性のときの色は。", "a": "青色"}, {"id": 142, "group": "気体", "badge": "気体の性質", "q": "酸性のとき、リトマス紙は何色から何色に変化するか。", "a": "青→赤"}, {"id": 143, "group": "気体", "badge": "気体の性質", "q": "水素の化学式は。", "a": "H2"}, {"id": 144, "group": "気体", "badge": "気体の性質", "q": "水素の発生法で、金属(鉄・亜鉛など)に加えるものは何か。", "a": "うすい塩酸"}, {"id": 145, "group": "気体", "badge": "気体の性質", "q": "水素を発生させるのに使う金属の例を2つ。", "a": "鉄・亜鉛"}, {"id": 146, "group": "気体", "badge": "気体の性質", "q": "水素は水にとけるか、とけないか。", "a": "とけない"}, {"id": 147, "group": "気体", "badge": "気体の性質", "q": "水素は何で集めるか。", "a": "水上置換法"}, {"id": 148, "group": "気体", "badge": "気体の性質", "q": "水素は空気よりどうか。", "a": "とても軽い"}, {"id": 149, "group": "気体", "badge": "気体の性質", "q": "最も密度が小さい気体は何か。", "a": "水素(0.090g/L)"}, {"id": 150, "group": "気体", "badge": "気体の性質", "q": "水素に火をつけるとどうなるか。", "a": "音をたてて燃え、水ができる"}, {"id": 151, "group": "気体", "badge": "気体の性質", "q": "水素は何と結びつくと水ができるか。", "a": "酸素"}, {"id": 152, "group": "気体", "badge": "気体の性質", "q": "水素＋酸素→何ができるか。", "a": "水"}, {"id": 153, "group": "気体", "badge": "気体の性質", "q": "窒素の化学式は。", "a": "N2"}, {"id": 154, "group": "気体", "badge": "気体の性質", "q": "窒素は何で集めるか。", "a": "水上置換法"}, {"id": 155, "group": "気体", "badge": "気体の性質", "q": "窒素は空気中に約何%あるか。", "a": "約78%"}, {"id": 156, "group": "気体", "badge": "気体の性質", "q": "窒素は空気より少し重いか軽いか。", "a": "少し軽い(1.25g/L)"}, {"id": 157, "group": "気体", "badge": "気体の性質", "q": "窒素は高温で酸素と結びつくと、大気汚染の原因にもなる何を生じるか。", "a": "二酸化窒素"}, {"id": 158, "group": "気体", "badge": "気体の性質", "q": "アンモニアの化学式は。", "a": "NH3"}, {"id": 159, "group": "気体", "badge": "気体の性質", "q": "アンモニアの発生に使う、水酸化カルシウムや水酸化ナトリウムと反応させる物質は。", "a": "塩化アンモニウム"}, {"id": 160, "group": "気体", "badge": "気体の性質", "q": "アンモニアの発生法1で、塩化アンモニウムと混ぜて加熱する物質は。", "a": "水酸化カルシウム"}, {"id": 161, "group": "気体", "badge": "気体の性質", "q": "アンモニアの発生法2で、塩化アンモニウムとともに水を加える物質は。", "a": "水酸化ナトリウム"}, {"id": 162, "group": "気体", "badge": "気体の性質", "q": "アンモニアは水によくとけるか、とけにくいか。", "a": "よくとける"}, {"id": 163, "group": "気体", "badge": "気体の性質", "q": "アンモニアが水に溶けたものを何というか。", "a": "アンモニア水"}, {"id": 164, "group": "気体", "badge": "気体の性質", "q": "アンモニアの水溶液は何性か。", "a": "アルカリ性"}, {"id": 165, "group": "気体", "badge": "気体の性質", "q": "アルカリ性のとき、BTB溶液は何色か。", "a": "青色"}, {"id": 166, "group": "気体", "badge": "気体の性質", "q": "アルカリ性のとき、リトマス紙は何色から何色に変化するか。", "a": "赤→青"}, {"id": 167, "group": "気体", "badge": "気体の性質", "q": "アルカリ性で赤色になる指示薬は何か。", "a": "フェノールフタレイン溶液"}, {"id": 168, "group": "気体", "badge": "気体の性質", "q": "アンモニアのにおいはどんなにおいか。", "a": "刺激臭"}, {"id": 169, "group": "気体", "badge": "気体の性質", "q": "アンモニアは空気より軽いか重いか。", "a": "軽い(0.69g/L)"}, {"id": 170, "group": "気体", "badge": "気体の性質", "q": "アンモニアは何で集めるか。", "a": "上方置換法"}, {"id": 171, "group": "気体", "badge": "気体の性質", "q": "アンモニアに塩酸をつけたガラス棒を近づけると何が生じるか。", "a": "白煙"}, {"id": 172, "group": "気体", "badge": "気体の性質", "q": "噴水実験で、アンモニアが水に溶けるとフラスコ内はどうなるか。", "a": "低圧になる"}, {"id": 173, "group": "気体", "badge": "気体の性質", "q": "噴水実験でフェノールフタレイン液は何色になるか。", "a": "赤色"}, {"id": 174, "group": "気体", "badge": "気体の性質", "q": "塩化水素の化学式は。", "a": "HCl"}, {"id": 175, "group": "気体", "badge": "気体の性質", "q": "塩化水素の発生法で、食塩(塩化ナトリウム)に加えて加熱するものは。", "a": "濃硫酸"}, {"id": 176, "group": "気体", "badge": "気体の性質", "q": "塩化水素は水にとけやすいか、とけにくいか。", "a": "とけやすい"}, {"id": 177, "group": "気体", "badge": "気体の性質", "q": "塩化水素が水に溶けたものを何というか。", "a": "塩酸"}, {"id": 178, "group": "気体", "badge": "気体の性質", "q": "塩化水素の水溶液は何性か。", "a": "酸性"}, {"id": 179, "group": "気体", "badge": "気体の性質", "q": "塩化水素のにおいはどんなにおいか。", "a": "刺激臭"}, {"id": 180, "group": "気体", "badge": "気体の性質", "q": "塩化水素は空気より重いか軽いか。", "a": "重い"}, {"id": 181, "group": "気体", "badge": "気体の性質", "q": "塩化水素は何で集めるか。", "a": "下方置換法"}, {"id": 182, "group": "物質・密度", "badge": "逆引き", "q": "水上置換法で集める、水にとけにくい気体を3つ答えよ。", "a": "酸素・水素・窒素"}, {"id": 183, "group": "物質・密度", "badge": "逆引き", "q": "下方置換法で集める気体を2つ答えよ。", "a": "二酸化炭素・塩化水素"}, {"id": 184, "group": "物質・密度", "badge": "逆引き", "q": "上方置換法で集める気体は何か。", "a": "アンモニア"}, {"id": 185, "group": "物質・密度", "badge": "逆引き", "q": "水によくとけ、アルカリ性を示す気体は何か。", "a": "アンモニア"}, {"id": 186, "group": "物質・密度", "badge": "逆引き", "q": "石灰水を白くにごらせる気体は何か。", "a": "二酸化炭素"}, {"id": 187, "group": "物質・密度", "badge": "逆引き", "q": "火を近づけると音をたてて燃える気体は何か。", "a": "水素"}, {"id": 188, "group": "物質・密度", "badge": "逆引き", "q": "線香が激しく燃える気体は何か。", "a": "酸素"}, {"id": 189, "group": "物質・密度", "badge": "逆引き", "q": "刺激臭のある気体を2つ答えよ。", "a": "アンモニア・塩化水素"}, {"id": 190, "group": "物質・密度", "badge": "逆引き", "q": "酸素の発生に使う、触媒のはたらきをする物質は。", "a": "二酸化マンガン"}, {"id": 191, "group": "物質・密度", "badge": "逆引き", "q": "密度が大きいほど、水に浮きやすいか沈みやすいか。", "a": "沈みやすい"}, {"id": 192, "group": "物質・密度", "badge": "逆引き", "q": "自由電子をもち、電気や熱をよく通すのは金属・非金属どちらか。", "a": "金属"}, {"id": 193, "group": "物質・密度", "badge": "逆引き", "q": "燃やすと二酸化炭素が出るのは、有機物・無機物どちらか。", "a": "有機物"}, {"id": 194, "group": "気体", "badge": "その他の気体", "q": "硫化水素の化学式は。", "a": "H2S"}, {"id": 195, "group": "気体", "badge": "その他の気体", "q": "硫化水素のにおいはどんなにおいか。", "a": "腐卵臭(くさったたまごのにおい)"}, {"id": 196, "group": "気体", "badge": "その他の気体", "q": "硫化水素は空気より重いか軽いか。", "a": "少し重い"}, {"id": 197, "group": "気体", "badge": "その他の気体", "q": "硫化水素は水にとけやすいか、とけにくいか。", "a": "とけやすい"}, {"id": 198, "group": "気体", "badge": "その他の気体", "q": "硫化水素は何で集めるか。", "a": "下方置換法"}, {"id": 199, "group": "気体", "badge": "その他の気体", "q": "硫化水素の水溶液は何性か。", "a": "酸性"}, {"id": 200, "group": "気体", "badge": "その他の気体", "q": "塩素の化学式は。", "a": "Cl2"}, {"id": 201, "group": "気体", "badge": "その他の気体", "q": "塩素のにおいはどんなにおいか。", "a": "刺激臭"}, {"id": 202, "group": "気体", "badge": "その他の気体", "q": "塩素は空気より重いか軽いか。", "a": "重い"}, {"id": 203, "group": "気体", "badge": "その他の気体", "q": "塩素は水にとけやすいか、とけにくいか。", "a": "とけやすい"}, {"id": 204, "group": "気体", "badge": "その他の気体", "q": "塩素は何で集めるか。", "a": "下方置換法"}, {"id": 205, "group": "気体", "badge": "その他の気体", "q": "塩素の水溶液は何性か。", "a": "酸性"}, {"id": 206, "group": "気体", "badge": "その他の気体", "q": "塩素にある、菌をころし色をぬくはたらきを何というか。", "a": "殺菌・漂白(作用)"}, {"id": 207, "group": "気体", "badge": "その他の気体", "q": "メタンの化学式は。", "a": "CH4"}, {"id": 208, "group": "気体", "badge": "その他の気体", "q": "メタンにおいはあるか、ないか。", "a": "なし"}, {"id": 209, "group": "気体", "badge": "その他の気体", "q": "メタンは空気より重いか軽いか。", "a": "軽い"}, {"id": 210, "group": "気体", "badge": "その他の気体", "q": "メタンは水にとけやすいか、とけにくいか。", "a": "とけにくい"}, {"id": 211, "group": "気体", "badge": "その他の気体", "q": "メタンは何で集めるか。", "a": "水上置換法"}, {"id": 212, "group": "気体", "badge": "その他の気体", "q": "メタンは何の主成分か。", "a": "天然ガス"}, {"id": 213, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄の化学式は。", "a": "SO2"}, {"id": 214, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄のにおいはどんなにおいか。", "a": "刺激臭"}, {"id": 215, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄は空気より重いか軽いか。", "a": "重い"}, {"id": 216, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄は水にとけやすいか、とけにくいか。", "a": "とけやすい"}, {"id": 217, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄は何で集めるか。", "a": "下方置換法"}, {"id": 218, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄の水溶液は何性か。", "a": "酸性"}, {"id": 219, "group": "気体", "badge": "その他の気体", "q": "二酸化硫黄が原因となる環境問題は何か。", "a": "酸性雨"}]}, "rikaB": {"name": "理科β 生物", "icon": "🔬", "key": "rika_beta_game_v1", "theme": {"paper": "#eef3f1", "main": "#1f7a6b", "mainD": "#11574b", "gold": "#e07b39", "line": "#cfe0db", "good": "#3f8f4f", "again": "#c2592c", "petA": "#e6f1ee", "petB": "#dceae5"}, "filters": [["ぜんぶ", "all"], ["動物", "動物の分類"], ["細胞", "細胞"], ["光合成", "光合成・呼吸"]], "groupColors": {"動物の分類": {"bg": "#f6e7d6", "fg": "#b5612a"}, "細胞": {"bg": "#d8eee9", "fg": "#15786a"}, "光合成・呼吸": {"bg": "#e3f0d6", "fg": "#4f8f33"}}, "stages": [{"pt": 0, "emoji": "🔬", "name": "けんびきょう係", "word": "観察を はじめた"}, {"pt": 15, "emoji": "📓", "name": "標本あつめ", "word": "スケッチが ふえてきた"}, {"pt": 40, "emoji": "🥼", "name": "研究助手", "word": "白衣を 着た"}, {"pt": 80, "emoji": "🧫", "name": "研究員", "word": "じぶんの 研究を もった"}, {"pt": 140, "emoji": "🧬", "name": "生物学者", "word": "あたらしい 発見を した"}, {"pt": 210, "emoji": "🎓", "name": "博士", "word": "博士号を とった！"}, {"pt": 300, "emoji": "🏆", "name": "大博士・教授", "word": "世界に みとめられた！"}], "cards": [{"id": 0, "group": "動物の分類", "badge": "脊椎動物", "q": "背骨(脊椎)がある動物のなかまを何というか。", "a": "脊椎動物"}, {"id": 1, "group": "動物の分類", "badge": "脊椎動物", "q": "背骨を中心とした、からだを支える骨格を何というか。", "a": "内骨格"}, {"id": 2, "group": "動物の分類", "badge": "脊椎動物", "q": "脊椎動物は、呼吸・体温・子のうまれ方などによっていくつのグループに分類されるか。", "a": "5つ"}, {"id": 3, "group": "動物の分類", "badge": "脊椎動物", "q": "脊椎動物の5つの分類をすべて答えよ。", "a": "魚類・両生類・ハチュウ類・鳥類・哺乳類"}, {"id": 4, "group": "動物の分類", "badge": "脊椎動物", "q": "魚類の呼吸器官は何か。", "a": "えら"}, {"id": 5, "group": "動物の分類", "badge": "脊椎動物", "q": "両生類の子(幼生)は、何で呼吸するか。", "a": "えらと皮膚"}, {"id": 6, "group": "動物の分類", "badge": "脊椎動物", "q": "両生類の親(成体)は、何で呼吸するか。", "a": "肺と皮膚"}, {"id": 7, "group": "動物の分類", "badge": "脊椎動物", "q": "ハチュウ類・鳥類・哺乳類に共通する呼吸器官は何か。", "a": "肺"}, {"id": 8, "group": "動物の分類", "badge": "脊椎動物", "q": "外界の温度が変化しても体温がほぼ一定に保たれる動物を何というか。", "a": "恒温動物"}, {"id": 9, "group": "動物の分類", "badge": "脊椎動物", "q": "外界の温度とともに体温が変化する動物を何というか。", "a": "変温動物"}, {"id": 10, "group": "動物の分類", "badge": "脊椎動物", "q": "恒温動物に分類される2つのなかまは何か。", "a": "鳥類・哺乳類"}, {"id": 11, "group": "動物の分類", "badge": "脊椎動物", "q": "変温動物に分類される3つのなかまは何か。", "a": "魚類・両生類・ハチュウ類"}, {"id": 12, "group": "動物の分類", "badge": "脊椎動物", "q": "子が母親の体内である程度育ってからうまれる、子のうまれ方を何というか。", "a": "胎生"}, {"id": 13, "group": "動物の分類", "badge": "脊椎動物", "q": "親が卵をうみ、卵から子がかえる、子のうまれ方を何というか。", "a": "卵生"}, {"id": 14, "group": "動物の分類", "badge": "脊椎動物", "q": "胎生でなかまをふやすのはどの分類か。", "a": "哺乳類"}, {"id": 15, "group": "動物の分類", "badge": "脊椎動物", "q": "魚類の体表は何でおおわれているか。", "a": "うろこ"}, {"id": 16, "group": "動物の分類", "badge": "脊椎動物", "q": "両生類の体表のようすを答えよ。", "a": "しめった皮膚"}, {"id": 17, "group": "動物の分類", "badge": "脊椎動物", "q": "ハチュウ類の体表は何でおおわれているか。", "a": "かたいうろこやこうら"}, {"id": 18, "group": "動物の分類", "badge": "脊椎動物", "q": "鳥類の体表は何でおおわれているか。", "a": "羽毛"}, {"id": 19, "group": "動物の分類", "badge": "脊椎動物", "q": "哺乳類の体表は何でおおわれているか。", "a": "毛"}, {"id": 20, "group": "動物の分類", "badge": "脊椎動物", "q": "魚類・両生類は、どこに卵をうむか。", "a": "水中"}, {"id": 21, "group": "動物の分類", "badge": "脊椎動物", "q": "ハチュウ類・鳥類は、どこに卵をうむか。", "a": "陸上"}, {"id": 22, "group": "動物の分類", "badge": "脊椎動物", "q": "魚類・両生類の卵には、殻があるかないか。", "a": "殻がない"}, {"id": 23, "group": "動物の分類", "badge": "脊椎動物", "q": "ハチュウ類・鳥類の卵には、殻があるかないか。", "a": "殻がある"}, {"id": 24, "group": "動物の分類", "badge": "脊椎動物", "q": "魚類の例を1つ答えよ。", "a": "サケ(メダカ・コイ・フナ など)"}, {"id": 25, "group": "動物の分類", "badge": "脊椎動物", "q": "両生類の例を1つ答えよ。", "a": "カエル(イモリ・サンショウウオ)"}, {"id": 26, "group": "動物の分類", "badge": "脊椎動物", "q": "ハチュウ類の例を1つ答えよ。", "a": "トカゲ(カメ・ヤモリ・ワニ・ヘビ)"}, {"id": 27, "group": "動物の分類", "badge": "脊椎動物", "q": "鳥類の例を1つ答えよ。", "a": "ハト(タカ・ペンギン・ダチョウ など)"}, {"id": 28, "group": "動物の分類", "badge": "脊椎動物", "q": "哺乳類の例を1つ答えよ。", "a": "イヌ(クジラ・コウモリ・ゾウ など)"}, {"id": 29, "group": "動物の分類", "badge": "脊椎動物", "q": "ヘビ・ヤモリ・カメは何類か。", "a": "ハチュウ類"}, {"id": 30, "group": "動物の分類", "badge": "脊椎動物", "q": "イモリは何類か。", "a": "両生類"}, {"id": 31, "group": "動物の分類", "badge": "脊椎動物", "q": "ペンギンは何類か。", "a": "鳥類"}, {"id": 32, "group": "動物の分類", "badge": "脊椎動物", "q": "クジラ・イルカは何類か。", "a": "哺乳類"}, {"id": 33, "group": "動物の分類", "badge": "脊椎動物", "q": "コウモリは何類か。", "a": "哺乳類"}, {"id": 34, "group": "動物の分類", "badge": "脊椎動物", "q": "子と親で呼吸器官が変わるのは何類の特徴か。", "a": "両生類"}, {"id": 35, "group": "動物の分類", "badge": "脊椎動物", "q": "植物を食物とする動物を何というか。", "a": "草食動物"}, {"id": 36, "group": "動物の分類", "badge": "脊椎動物", "q": "他の動物を食物とする動物を何というか。", "a": "肉食動物"}, {"id": 37, "group": "動物の分類", "badge": "脊椎動物", "q": "草食動物で発達している、植物をすりつぶす歯を何というか。", "a": "臼歯"}, {"id": 38, "group": "動物の分類", "badge": "脊椎動物", "q": "肉食動物で発達している、肉を食いちぎる歯を何というか。", "a": "犬歯"}, {"id": 39, "group": "動物の分類", "badge": "脊椎動物", "q": "草食動物の目のつき方と、その利点を答えよ。", "a": "横向きで、広い範囲を見わたせる"}, {"id": 40, "group": "動物の分類", "badge": "脊椎動物", "q": "肉食動物の目のつき方と、その利点を答えよ。", "a": "前向きで、立体的に見え距離がわかりやすい"}, {"id": 41, "group": "動物の分類", "badge": "脊椎動物", "q": "シマウマは草食動物・肉食動物のどちらか。", "a": "草食動物"}, {"id": 42, "group": "動物の分類", "badge": "脊椎動物", "q": "ライオンは草食動物・肉食動物のどちらか。", "a": "肉食動物"}, {"id": 43, "group": "動物の分類", "badge": "無脊椎動物", "q": "背骨がない動物のなかまを何というか。", "a": "無脊椎動物"}, {"id": 44, "group": "動物の分類", "badge": "無脊椎動物", "q": "からだが外骨格でおおわれ、からだやあしに節がある動物を何というか。", "a": "節足動物"}, {"id": 45, "group": "動物の分類", "badge": "無脊椎動物", "q": "節足動物のからだやあしをおおう、かたい殻を何というか。", "a": "外骨格"}, {"id": 46, "group": "動物の分類", "badge": "無脊椎動物", "q": "外骨格をぬぎすてて成長することを何というか。", "a": "脱皮"}, {"id": 47, "group": "動物の分類", "badge": "無脊椎動物", "q": "幼生と成体でからだの形や生活様式が変化することを何というか。", "a": "変態"}, {"id": 48, "group": "動物の分類", "badge": "無脊椎動物", "q": "昆虫類のからだが分かれる3つの部分を答えよ。", "a": "頭部・胸部・腹部"}, {"id": 49, "group": "動物の分類", "badge": "無脊椎動物", "q": "昆虫類のあしは何対(何本)あるか。", "a": "3対(6本)"}, {"id": 50, "group": "動物の分類", "badge": "無脊椎動物", "q": "昆虫類のあしは、からだのどの部分についているか。", "a": "胸部"}, {"id": 51, "group": "動物の分類", "badge": "無脊椎動物", "q": "昆虫類のはねは、ふつう何対あるか。", "a": "2対"}, {"id": 52, "group": "動物の分類", "badge": "無脊椎動物", "q": "昆虫類が空気をとり入れる、胸部や腹部にある穴を何というか。", "a": "気門"}, {"id": 53, "group": "動物の分類", "badge": "無脊椎動物", "q": "昆虫類の例を1つ答えよ。", "a": "バッタ(チョウ・カブトムシ)"}, {"id": 54, "group": "動物の分類", "badge": "無脊椎動物", "q": "甲殻類の多くは水中で生活し、何で呼吸するか。", "a": "えら"}, {"id": 55, "group": "動物の分類", "badge": "無脊椎動物", "q": "甲殻類のからだのつくりを答えよ。", "a": "頭部・胸部・腹部、または頭胸部・腹部"}, {"id": 56, "group": "動物の分類", "badge": "無脊椎動物", "q": "甲殻類の例を1つ答えよ。", "a": "ザリガニ(エビ・カニ・ミジンコ)"}, {"id": 57, "group": "動物の分類", "badge": "無脊椎動物", "q": "ミジンコは何類のなかまか。", "a": "甲殻類"}, {"id": 58, "group": "動物の分類", "badge": "無脊椎動物", "q": "クモ類・ムカデ類・ヤスデ類は、何動物のなかまか。", "a": "節足動物"}, {"id": 59, "group": "動物の分類", "badge": "無脊椎動物", "q": "からだがやわらかい筋肉でできていて、内臓が外とう膜に包まれている動物を何というか。", "a": "軟体動物"}, {"id": 60, "group": "動物の分類", "badge": "無脊椎動物", "q": "軟体動物で、内臓を包んでいる膜を何というか。", "a": "外とう膜"}, {"id": 61, "group": "動物の分類", "badge": "無脊椎動物", "q": "水中で生活する軟体動物の呼吸器官は何か。", "a": "えら"}, {"id": 62, "group": "動物の分類", "badge": "無脊椎動物", "q": "陸上で生活する軟体動物の呼吸器官は何か。", "a": "肺"}, {"id": 63, "group": "動物の分類", "badge": "無脊椎動物", "q": "軟体動物の例を1つ答えよ。", "a": "アサリ(タコ・イカ・マイマイ・ハマグリ)"}, {"id": 64, "group": "動物の分類", "badge": "無脊椎動物", "q": "マイマイ(カタツムリ)は何動物のなかまか。", "a": "軟体動物"}, {"id": 65, "group": "動物の分類", "badge": "無脊椎動物", "q": "クラゲ・イソギンチャク・サンゴは何動物のなかまか。", "a": "刺胞動物"}, {"id": 66, "group": "動物の分類", "badge": "無脊椎動物", "q": "ミミズ・ゴカイは何動物のなかまか。", "a": "環形動物"}, {"id": 67, "group": "動物の分類", "badge": "無脊椎動物", "q": "ウニ・ナマコ・ヒトデは何動物のなかまか。", "a": "棘皮動物"}, {"id": 68, "group": "動物の分類", "badge": "無脊椎動物", "q": "イカが水をはき出して移動するときに使う部分を何というか。", "a": "ろうと"}, {"id": 69, "group": "動物の分類", "badge": "無脊椎動物", "q": "アサリの貝殻をつくっている成分は何か。", "a": "炭酸カルシウム"}, {"id": 70, "group": "動物の分類", "badge": "無脊椎動物", "q": "ザリガニのからだが分かれる2つの部分を答えよ。", "a": "頭胸部・腹部"}, {"id": 71, "group": "動物の分類", "badge": "無脊椎動物", "q": "ザリガニのあしは何対あるか。", "a": "5対"}, {"id": 72, "group": "動物の分類", "badge": "無脊椎動物", "q": "バッタの目を何というか。", "a": "複眼"}, {"id": 73, "group": "動物の分類", "badge": "無脊椎動物", "q": "エビ・カニのなかまを何類というか。", "a": "甲殻類"}, {"id": 74, "group": "動物の分類", "badge": "無脊椎動物", "q": "バッタ・チョウのなかまを何類というか。", "a": "昆虫類"}, {"id": 75, "group": "細胞", "badge": "細胞", "q": "生物のからだをつくる基本単位を何というか。", "a": "細胞"}, {"id": 76, "group": "細胞", "badge": "細胞", "q": "ふつう1個の細胞に1個あり、酢酸カーミン液や酢酸オルセイン液でよく染まる部分を何というか。", "a": "核"}, {"id": 77, "group": "細胞", "badge": "細胞", "q": "核を染めるのに使う染色液を2つ答えよ。", "a": "酢酸カーミン液・酢酸オルセイン液"}, {"id": 78, "group": "細胞", "badge": "細胞", "q": "核のまわりの部分を何というか。", "a": "細胞質"}, {"id": 79, "group": "細胞", "badge": "細胞", "q": "細胞質の一部で、細胞のいちばん外側にあるうすい膜を何というか。", "a": "細胞膜"}, {"id": 80, "group": "細胞", "badge": "細胞", "q": "植物細胞だけに見られる、緑色の粒を何というか。", "a": "葉緑体"}, {"id": 81, "group": "細胞", "badge": "細胞", "q": "植物細胞だけに見られる、細胞膜の外側のじょうぶな仕切りを何というか。", "a": "細胞壁"}, {"id": 82, "group": "細胞", "badge": "細胞", "q": "植物細胞だけに見られる、貯蔵物や色素などを含む液体の入った袋を何というか。", "a": "液胞"}, {"id": 83, "group": "細胞", "badge": "細胞", "q": "植物細胞と動物細胞に共通するつくりを3つ答えよ。", "a": "核・細胞膜・細胞質"}, {"id": 84, "group": "細胞", "badge": "細胞", "q": "植物細胞だけに見られるつくりを3つ答えよ。", "a": "葉緑体・細胞壁・液胞"}, {"id": 85, "group": "細胞", "badge": "細胞", "q": "タンパク質をつくるつくりを何というか。", "a": "リボソーム"}, {"id": 86, "group": "細胞", "badge": "細胞", "q": "物質の分泌に関わるつくりを何というか。", "a": "ゴルジ体"}, {"id": 87, "group": "細胞", "badge": "細胞", "q": "細胞の呼吸を行うつくりを何というか。", "a": "ミトコンドリア"}, {"id": 88, "group": "細胞", "badge": "細胞", "q": "からだがたくさんの細胞でできている生物を何というか。", "a": "多細胞生物"}, {"id": 89, "group": "細胞", "badge": "細胞", "q": "からだが1個の細胞でできている生物を何というか。", "a": "単細胞生物"}, {"id": 90, "group": "細胞", "badge": "細胞", "q": "多細胞生物で、同じ形・同じはたらきの細胞が集まったものを何というか。", "a": "組織"}, {"id": 91, "group": "細胞", "badge": "細胞", "q": "いくつかの組織が集まって、決まったはたらきをするものを何というか。", "a": "器官"}, {"id": 92, "group": "細胞", "badge": "細胞", "q": "多細胞生物のからだのなりたちを順に並べよ。", "a": "細胞→組織→器官→個体"}, {"id": 93, "group": "細胞", "badge": "細胞", "q": "単細胞生物の例を1つ答えよ。", "a": "ゾウリムシ(ミカヅキモ・ミドリムシ・アメーバ)"}, {"id": 94, "group": "細胞", "badge": "細胞", "q": "オオカナダモの葉やヒトのほおの内側の細胞は、多細胞・単細胞のどちらの例か。", "a": "多細胞生物"}, {"id": 95, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "葉脈の部分で、道管と師管が集まったものを何というか。", "a": "維管束"}, {"id": 96, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "根で吸収した水の通り道となる管を何というか。", "a": "道管"}, {"id": 97, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "葉でつくられた養分の通り道となる管を何というか。", "a": "師管"}, {"id": 98, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "葉の表皮に見られるすきまで、二酸化炭素や酸素の出入り口となる部分を何というか。", "a": "気孔"}, {"id": 99, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "気孔を囲んでいる2つの細胞を何というか。", "a": "孔辺細胞"}, {"id": 100, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "気孔は、酸素・二酸化炭素の出入り口のほか、何の出口でもあるか。", "a": "水蒸気"}, {"id": 101, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "植物が光を受けて、水と二酸化炭素からデンプンなどの養分と酸素をつくるはたらきを何というか。", "a": "光合成"}, {"id": 102, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "光合成は、細胞の中のどの部分で行われるか。", "a": "葉緑体"}, {"id": 103, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "光合成の材料となる2つの物質は何か。", "a": "水・二酸化炭素"}, {"id": 104, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "光合成でつくられる養分(物質)は何か。", "a": "デンプンなど"}, {"id": 105, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "光合成でつくられる気体は何か。", "a": "酸素"}, {"id": 106, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "光合成の式「水＋二酸化炭素→(　)→デンプンなど＋酸素」の(　)に入るものは。", "a": "光(光のエネルギー)"}, {"id": 107, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "デンプンがあるかどうかを調べる薬品(試薬)は何か。", "a": "ヨウ素液"}, {"id": 108, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "デンプンにヨウ素液をつけると何色になるか。", "a": "青紫色"}, {"id": 109, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "葉を脱色するために使う液体は何か。", "a": "エタノール"}, {"id": 110, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "あたためたエタノールに葉をひたすのはなぜか。", "a": "葉を脱色し、色の変化を見やすくするため"}, {"id": 111, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "エタノールを直接加熱せず、湯であたためるのはなぜか。", "a": "エタノールは引火しやすいから"}, {"id": 112, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "脱色の前に、葉を熱湯に入れるのはなぜか。", "a": "葉をやわらかくするため"}, {"id": 113, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "BTB溶液で、酸性のときの色は何色か。", "a": "黄色"}, {"id": 114, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "BTB溶液で、中性のときの色は何色か。", "a": "緑色"}, {"id": 115, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "BTB溶液で、アルカリ性のときの色は何色か。", "a": "青色"}, {"id": 116, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "二酸化炭素が水にとけると、酸性・中性・アルカリ性のどれを示すか。", "a": "酸性"}, {"id": 117, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "調べる条件以外をすべて同じにして行う実験を何というか。", "a": "対照実験"}, {"id": 118, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "酸素を使って養分を分解し、生きるためのエネルギーをとり出すはたらきを何というか。", "a": "呼吸"}, {"id": 119, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "呼吸でできる2つの物質は何か。", "a": "二酸化炭素・水"}, {"id": 120, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "呼吸の式「養分＋酸素→二酸化炭素＋水＋(　)」の(　)に入るものは。", "a": "エネルギー"}, {"id": 121, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "二酸化炭素を通すと白くにごる液体は何か。", "a": "石灰水"}, {"id": 122, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "昼、植物は光合成と呼吸のどちらを行っているか。", "a": "両方(光合成と呼吸)"}, {"id": 123, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "昼、光合成と呼吸のどちらのはたらきが盛んか。", "a": "光合成"}, {"id": 124, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "昼、植物は全体として何の気体を吸収し、何を放出しているように見えるか。", "a": "二酸化炭素を吸収し、酸素を放出"}, {"id": 125, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "夜、植物は光合成と呼吸のどちらを行っているか。", "a": "呼吸のみ"}, {"id": 126, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "夜、植物は全体として何の気体を吸収し、何を放出しているか。", "a": "酸素を吸収し、二酸化炭素を放出"}, {"id": 127, "group": "光合成・呼吸", "badge": "光合成・呼吸", "q": "オオカナダモの葉を脱色しヨウ素液をたらすと青紫色になった。葉に何があるとわかるか。", "a": "デンプン"}, {"id": 128, "group": "動物の分類", "badge": "特徴→何類", "q": "一生えらで呼吸する脊椎動物は何類か。", "a": "魚類"}, {"id": 129, "group": "動物の分類", "badge": "特徴→何類", "q": "幼生はえらと皮膚、成体は肺と皮膚で呼吸する動物は何類か。", "a": "両生類"}, {"id": 130, "group": "動物の分類", "badge": "特徴→何類", "q": "一生、肺で呼吸する変温動物は何類か。", "a": "ハチュウ類"}, {"id": 131, "group": "動物の分類", "badge": "特徴→何類", "q": "体表がうろこでおおわれている脊椎動物は何類か。", "a": "魚類"}, {"id": 132, "group": "動物の分類", "badge": "特徴→何類", "q": "体表がしめった皮膚でおおわれている動物は何類か。", "a": "両生類"}, {"id": 133, "group": "動物の分類", "badge": "特徴→何類", "q": "体表がかたいうろこやこうらでおおわれている動物は何類か。", "a": "ハチュウ類"}, {"id": 134, "group": "動物の分類", "badge": "特徴→何類", "q": "体表が羽毛でおおわれている動物は何類か。", "a": "鳥類"}, {"id": 135, "group": "動物の分類", "badge": "特徴→何類", "q": "体表が毛でおおわれている動物は何類か。", "a": "哺乳類"}, {"id": 136, "group": "動物の分類", "badge": "特徴→何類", "q": "殻のない卵を水中にうむ脊椎動物は何類と何類か。", "a": "魚類・両生類"}, {"id": 137, "group": "動物の分類", "badge": "特徴→何類", "q": "殻のある卵を陸上にうむ脊椎動物は何類と何類か。", "a": "ハチュウ類・鳥類"}, {"id": 138, "group": "動物の分類", "badge": "特徴→何類", "q": "胎生でうまれる脊椎動物は何類か。", "a": "哺乳類"}, {"id": 139, "group": "動物の分類", "badge": "特徴→何類", "q": "卵生の恒温動物は何類か。", "a": "鳥類"}, {"id": 140, "group": "動物の分類", "badge": "特徴→何類", "q": "変温動物のうち、陸上に殻のある卵をうむのは何類か。", "a": "ハチュウ類"}, {"id": 141, "group": "動物の分類", "badge": "特徴→何類", "q": "毛でおおわれ胎生なのは何類か。", "a": "哺乳類"}, {"id": 142, "group": "動物の分類", "badge": "特徴→何類", "q": "羽毛でおおわれ卵生・恒温なのは何類か。", "a": "鳥類"}, {"id": 143, "group": "動物の分類", "badge": "特徴→何類", "q": "しめった皮膚で変温なのは何類か。", "a": "両生類"}, {"id": 144, "group": "動物の分類", "badge": "特徴→何類", "q": "かたいうろこで、陸上に殻のある卵をうむのは何類か。", "a": "ハチュウ類"}, {"id": 145, "group": "動物の分類", "badge": "特徴→何類", "q": "うろこでおおわれ、水中で卵をうむのは何類か。", "a": "魚類"}, {"id": 146, "group": "動物の分類", "badge": "特徴→何類", "q": "恒温動物を2つ答えよ。", "a": "鳥類・哺乳類"}, {"id": 147, "group": "動物の分類", "badge": "特徴→何類", "q": "変温動物を3つ答えよ。", "a": "魚類・両生類・ハチュウ類"}, {"id": 148, "group": "動物の分類", "badge": "動物名→分類", "q": "メダカ・コイは何類か。", "a": "魚類"}, {"id": 149, "group": "動物の分類", "badge": "動物名→分類", "q": "サンショウウオは何類か。", "a": "両生類"}, {"id": 150, "group": "動物の分類", "badge": "動物名→分類", "q": "ワニ・カメは何類か。", "a": "ハチュウ類"}, {"id": 151, "group": "動物の分類", "badge": "動物名→分類", "q": "ダチョウ・フクロウは何類か。", "a": "鳥類"}, {"id": 152, "group": "動物の分類", "badge": "動物名→分類", "q": "ネズミ・ゾウは何類か。", "a": "哺乳類"}, {"id": 153, "group": "動物の分類", "badge": "動物名→分類", "q": "ヘビは何類か。", "a": "ハチュウ類"}, {"id": 154, "group": "動物の分類", "badge": "動物名→分類", "q": "カエルは何類か。", "a": "両生類"}, {"id": 155, "group": "動物の分類", "badge": "動物名→分類", "q": "ハト・タカは何類か。", "a": "鳥類"}, {"id": 156, "group": "動物の分類", "badge": "動物名→分類", "q": "コウモリは何類か。", "a": "哺乳類"}, {"id": 157, "group": "動物の分類", "badge": "動物名→分類", "q": "イルカ・クジラは何類か。", "a": "哺乳類"}, {"id": 158, "group": "動物の分類", "badge": "動物名→分類", "q": "カブトムシ・チョウは何類か。", "a": "昆虫類"}, {"id": 159, "group": "動物の分類", "badge": "動物名→分類", "q": "エビ・カニは何類か。", "a": "甲殻類"}, {"id": 160, "group": "動物の分類", "badge": "動物名→分類", "q": "ミジンコは何類か。", "a": "甲殻類"}, {"id": 161, "group": "動物の分類", "badge": "動物名→分類", "q": "タコ・イカは何動物か。", "a": "軟体動物"}, {"id": 162, "group": "動物の分類", "badge": "動物名→分類", "q": "マイマイ(カタツムリ)は何動物か。", "a": "軟体動物"}, {"id": 163, "group": "動物の分類", "badge": "動物名→分類", "q": "アサリ・ハマグリは何動物か。", "a": "軟体動物"}, {"id": 164, "group": "動物の分類", "badge": "動物名→分類", "q": "クラゲ・イソギンチャク・サンゴは何動物か。", "a": "刺胞動物"}, {"id": 165, "group": "動物の分類", "badge": "動物名→分類", "q": "ミミズ・ゴカイは何動物か。", "a": "環形動物"}, {"id": 166, "group": "動物の分類", "badge": "動物名→分類", "q": "ウニ・ナマコ・ヒトデは何動物か。", "a": "棘皮動物"}, {"id": 167, "group": "動物の分類", "badge": "動物名→分類", "q": "クモは何類のなかまか。", "a": "クモ類"}, {"id": 168, "group": "動物の分類", "badge": "動物名→分類", "q": "ムカデ・ヤスデは何動物のなかまか。", "a": "節足動物"}, {"id": 169, "group": "動物の分類", "badge": "二択", "q": "臼歯が発達しているのは、草食動物・肉食動物のどちらか。", "a": "草食動物"}, {"id": 170, "group": "動物の分類", "badge": "二択", "q": "犬歯が発達しているのは、草食動物・肉食動物のどちらか。", "a": "肉食動物"}, {"id": 171, "group": "動物の分類", "badge": "二択", "q": "目が横向きについているのは、草食・肉食のどちらか。", "a": "草食動物"}, {"id": 172, "group": "動物の分類", "badge": "二択", "q": "目が前向きについているのは、草食・肉食のどちらか。", "a": "肉食動物"}, {"id": 173, "group": "動物の分類", "badge": "二択", "q": "広い範囲を見わたせるのは、草食・肉食のどちらか。", "a": "草食動物"}, {"id": 174, "group": "動物の分類", "badge": "二択", "q": "獲物までの距離をつかみやすいのは、草食・肉食のどちらか。", "a": "肉食動物"}, {"id": 175, "group": "動物の分類", "badge": "二択", "q": "脱皮をして成長するのは、節足動物・軟体動物のどちらか。", "a": "節足動物"}, {"id": 176, "group": "動物の分類", "badge": "二択", "q": "あしが5対あるのは、ザリガニ・バッタのどちらか。", "a": "ザリガニ"}, {"id": 177, "group": "動物の分類", "badge": "二択", "q": "細胞壁をもつのは、植物・動物のどちらの細胞か。", "a": "植物細胞"}, {"id": 178, "group": "動物の分類", "badge": "二択", "q": "葉緑体・細胞壁・液胞をもつのは、植物・動物のどちらの細胞か。", "a": "植物細胞"}, {"id": 179, "group": "動物の分類", "badge": "二択", "q": "ゾウリムシ・アメーバは、単細胞・多細胞のどちらか。", "a": "単細胞生物"}, {"id": 180, "group": "動物の分類", "badge": "二択", "q": "オオカナダモの葉の細胞は、単細胞・多細胞のどちらか。", "a": "多細胞生物"}, {"id": 181, "group": "動物の分類", "badge": "二択", "q": "水が通るのは、道管・師管のどちらか。", "a": "道管"}, {"id": 182, "group": "動物の分類", "badge": "二択", "q": "養分が通るのは、道管・師管のどちらか。", "a": "師管"}, {"id": 183, "group": "動物の分類", "badge": "二択", "q": "光合成でつくられる気体は、酸素・二酸化炭素のどちらか。", "a": "酸素"}, {"id": 184, "group": "動物の分類", "badge": "二択", "q": "呼吸で出される気体は、酸素・二酸化炭素のどちらか。", "a": "二酸化炭素"}, {"id": 185, "group": "動物の分類", "badge": "二択", "q": "光合成と呼吸の両方を行うのは、昼・夜のどちらか。", "a": "昼"}, {"id": 186, "group": "動物の分類", "badge": "二択", "q": "呼吸だけを行うのは、昼・夜のどちらか。", "a": "夜"}, {"id": 187, "group": "動物の分類", "badge": "二択", "q": "昼、より盛んなのは、光合成・呼吸のどちらか。", "a": "光合成"}, {"id": 188, "group": "動物の分類", "badge": "二択", "q": "エネルギーをとり出すのは、光合成・呼吸のどちらのはたらきか。", "a": "呼吸"}, {"id": 189, "group": "動物の分類", "badge": "二択", "q": "養分をつくるのは、光合成・呼吸のどちらのはたらきか。", "a": "光合成"}, {"id": 190, "group": "動物の分類", "badge": "二択", "q": "イカ・タコは背骨をもつか、もたないか。", "a": "もたない"}, {"id": 191, "group": "動物の分類", "badge": "二択", "q": "バッタは外骨格をもつか、もたないか。", "a": "もつ"}, {"id": 192, "group": "細胞", "badge": "無脊椎・細胞", "q": "外骨格をもち、からだやあしに節がある無脊椎動物を何というか。", "a": "節足動物"}, {"id": 193, "group": "細胞", "badge": "無脊椎・細胞", "q": "内臓が外とう膜に包まれた無脊椎動物を何というか。", "a": "軟体動物"}, {"id": 194, "group": "細胞", "badge": "無脊椎・細胞", "q": "気門で呼吸する節足動物のなかまは何類か。", "a": "昆虫類"}, {"id": 195, "group": "細胞", "badge": "無脊椎・細胞", "q": "えらで呼吸する節足動物のなかまは何類か。", "a": "甲殻類"}, {"id": 196, "group": "細胞", "badge": "無脊椎・細胞", "q": "あしが胸部に3対(6本)つく節足動物は何類か。", "a": "昆虫類"}, {"id": 197, "group": "細胞", "badge": "無脊椎・細胞", "q": "はねをもつ節足動物のなかまは何類か。", "a": "昆虫類"}, {"id": 198, "group": "細胞", "badge": "無脊椎・細胞", "q": "ろうとから水をはき出して移動する動物は何動物のなかまか。", "a": "軟体動物"}, {"id": 199, "group": "細胞", "badge": "無脊椎・細胞", "q": "貝殻が炭酸カルシウムでできているのは何動物のなかまか。", "a": "軟体動物"}, {"id": 200, "group": "細胞", "badge": "無脊椎・細胞", "q": "バッタのからだは頭部・胸部と、あと1つは何部か。", "a": "腹部"}, {"id": 201, "group": "細胞", "badge": "無脊椎・細胞", "q": "ザリガニのからだは腹部と、あと1つは何か。", "a": "頭胸部"}, {"id": 202, "group": "細胞", "badge": "無脊椎・細胞", "q": "昆虫類の複眼があるのは、からだのどの部分か。", "a": "頭部"}, {"id": 203, "group": "細胞", "badge": "無脊椎・細胞", "q": "節足動物のうち、昆虫類・甲殻類以外の例を1つ答えよ。", "a": "クモ類(ムカデ類・ヤスデ類)"}, {"id": 204, "group": "細胞", "badge": "無脊椎・細胞", "q": "無脊椎動物のうち、節足動物・軟体動物以外のなかまを3つ答えよ。", "a": "刺胞動物・環形動物・棘皮動物"}, {"id": 205, "group": "細胞", "badge": "無脊椎・細胞", "q": "酢酸カーミン液や酢酸オルセイン液でよく染まる部分はどこか。", "a": "核"}, {"id": 206, "group": "細胞", "badge": "無脊椎・細胞", "q": "緑色の粒で、光合成を行う部分を何というか。", "a": "葉緑体"}, {"id": 207, "group": "細胞", "badge": "無脊椎・細胞", "q": "細胞のいちばん外側にあるうすい膜を何というか。", "a": "細胞膜"}, {"id": 208, "group": "細胞", "badge": "無脊椎・細胞", "q": "貯蔵物や色素を含む液体の袋を何というか。", "a": "液胞"}, {"id": 209, "group": "細胞", "badge": "無脊椎・細胞", "q": "同じ形・はたらきの細胞が集まったものを何というか。", "a": "組織"}, {"id": 210, "group": "細胞", "badge": "無脊椎・細胞", "q": "組織が集まって決まったはたらきをするものを何というか。", "a": "器官"}, {"id": 211, "group": "細胞", "badge": "無脊椎・細胞", "q": "細胞の呼吸を行うつくりを何というか。", "a": "ミトコンドリア"}, {"id": 212, "group": "細胞", "badge": "無脊椎・細胞", "q": "タンパク質をつくるつくりを何というか。", "a": "リボソーム"}, {"id": 213, "group": "光合成・呼吸", "badge": "実験", "q": "二酸化炭素・酸素・水蒸気の出入り口となる葉のすきまを何というか。", "a": "気孔"}, {"id": 214, "group": "光合成・呼吸", "badge": "実験", "q": "デンプンにつけると青紫色になる薬品を何というか。", "a": "ヨウ素液"}, {"id": 215, "group": "光合成・呼吸", "badge": "実験", "q": "青紫色の変化は、葉に何があることを示すか。", "a": "デンプン"}, {"id": 216, "group": "光合成・呼吸", "badge": "実験", "q": "石灰水を白くにごらせる気体は何か。", "a": "二酸化炭素"}, {"id": 217, "group": "光合成・呼吸", "badge": "実験", "q": "BTB溶液が黄色のとき、水溶液は何性か。", "a": "酸性"}, {"id": 218, "group": "光合成・呼吸", "badge": "実験", "q": "BTB溶液が緑色のとき、水溶液は何性か。", "a": "中性"}, {"id": 219, "group": "光合成・呼吸", "badge": "実験", "q": "BTB溶液が青色のとき、水溶液は何性か。", "a": "アルカリ性"}, {"id": 220, "group": "光合成・呼吸", "badge": "実験", "q": "二酸化炭素が増えると、BTB溶液は何色になるか。", "a": "黄色"}, {"id": 221, "group": "光合成・呼吸", "badge": "実験", "q": "二酸化炭素が減ると、BTB溶液は何色になるか。", "a": "青色"}, {"id": 222, "group": "光合成・呼吸", "badge": "実験", "q": "葉を脱色するのに使う、引火しやすい液体は何か。", "a": "エタノール"}, {"id": 223, "group": "光合成・呼吸", "badge": "実験", "q": "全体として二酸化炭素を吸収し酸素を出すように見えるのは、昼・夜どちらか。", "a": "昼"}, {"id": 224, "group": "光合成・呼吸", "badge": "実験", "q": "全体として酸素を吸収し二酸化炭素を出すのは、昼・夜どちらか。", "a": "夜"}, {"id": 225, "group": "光合成・呼吸", "badge": "実験", "q": "調べる条件以外を同じにして結果を比べる実験を何というか。", "a": "対照実験"}, {"id": 226, "group": "光合成・呼吸", "badge": "実験", "q": "「水＋(　)→(光)→デンプンなど＋酸素」の(　)に入る気体は。", "a": "二酸化炭素"}, {"id": 227, "group": "光合成・呼吸", "badge": "実験", "q": "「水＋二酸化炭素→(光)→(　)＋酸素」の(　)に入る養分は。", "a": "デンプンなど"}, {"id": 228, "group": "光合成・呼吸", "badge": "実験", "q": "「養分＋(　)→二酸化炭素＋水＋エネルギー」の(　)に入る気体は。", "a": "酸素"}, {"id": 229, "group": "光合成・呼吸", "badge": "実験", "q": "「養分＋酸素→(　)＋水＋エネルギー」の(　)に入る気体は。", "a": "二酸化炭素"}, {"id": 230, "group": "光合成・呼吸", "badge": "実験", "q": "光合成で使われる気体は何か。", "a": "二酸化炭素"}, {"id": 231, "group": "光合成・呼吸", "badge": "実験", "q": "呼吸で使われる気体は何か。", "a": "酸素"}, {"id": 232, "group": "光合成・呼吸", "badge": "実験", "q": "光合成・呼吸の両方に関わる、葉の気体の出入り口を何というか。", "a": "気孔"}]}};
 const STEPS = [10,20,40,80,160,320];
-const MASTER_RANK = 2;              // rank>=2 を「覚えた」とみなす（2回連続正解）
-const KEY = "shakai_game_v1";
+const MASTER_RANK = 2;
 
-// 育成ステージ（累計ポイント）
-const STAGES = [
-  {pt:0,   emoji:"🥚", name:"たまご",            word:"なにかが ねむっている…"},
-  {pt:15,  emoji:"🐛", name:"いのちのめばえ",     word:"うごきだした！"},
-  {pt:40,  emoji:"🐟", name:"さかな",            word:"うみを およいでいる"},
-  {pt:80,  emoji:"🦎", name:"りくの いきもの",    word:"りくに あがった！"},
-  {pt:140, emoji:"🦕", name:"きょうりゅう",        word:"ぐんぐん そだっている"},
-  {pt:210, emoji:"🦖", name:"つよい きょうりゅう", word:"もう だれにも まけない"},
-  {pt:300, emoji:"🐉", name:"でんせつの ドラゴン", word:"でんせつに なった！"}
-];
+// ===== 共通ユーティリティ =====
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
+function readData(key){ try{ const d=JSON.parse(localStorage.getItem(key)); if(d&&d.srs) return d; }catch(e){} return {srs:{},points:0,maxCombo:0}; }
+function stageIdx(stages,pts){ let i=0; for(let k=0;k<stages.length;k++){ if(pts>=stages[k].pt) i=k; } return i; }
 
-let filter="all";
-let data = load();   // {srs:{id:{rank}}, points, maxCombo, stageIdx}
-let queue=[], tick=0, combo=0, showing="q", curId=null, session={done:0};
-
-function load(){
-  try{ const d=JSON.parse(localStorage.getItem(KEY)); if(d&&d.srs) return d; }catch(e){}
-  return {srs:{}, points:0, maxCombo:0, stageIdx:0};
+// ===== ホーム =====
+function renderHome(){
+  const wrap=document.getElementById('subjects'); wrap.innerHTML="";
+  Object.keys(SUBJECTS).forEach(key=>{
+    const s=SUBJECTS[key]; const d=readData(s.key);
+    const mastered=s.cards.filter(c=>{const x=d.srs[c.id];return x&&x.rank>=MASTER_RANK;}).length;
+    const pct=Math.round(mastered/s.cards.length*100);
+    const si=stageIdx(s.stages,d.points); const emo=s.stages[si].emoji;
+    const btn=document.createElement('button'); btn.className="scard";
+    btn.style.setProperty('--main',s.theme.main);
+    btn.innerHTML=
+      '<div class="emo">'+emo+'</div>'+
+      '<div class="body"><div class="nm" style="color:'+s.theme.mainD+'">'+s.icon+' '+s.name+'</div>'+
+      '<div class="meta">'+s.cards.length+'枚 ／ 覚えた '+mastered+'（'+pct+'%）・'+s.stages[si].name+'</div>'+
+      '<div class="pbar"><i style="width:'+pct+'%;background:linear-gradient(90deg,'+s.theme.main+','+s.theme.gold+')"></i></div></div>'+
+      '<div class="go">›</div>';
+    btn.onclick=()=>enterSubject(key);
+    wrap.appendChild(btn);
+  });
 }
-function save(){ try{ localStorage.setItem(KEY, JSON.stringify(data)); }catch(e){} }
 
-function pool(){ return ALL.filter(c=> filter==="all" || c.cat===filter); }
+// ===== ゲーム状態 =====
+let S=null, curKey=null, filter="all", data=null, queue=[], tick=0, combo=0, showing="q", curId=null;
+
+// コンボ掛け声（段階式・教科で最高潮ワードが変化）
+const CLIMAX={shakai:"莉奈、世界制覇モード🌍", rikaA:"莉奈、賢者の境地🧪", rikaB:"莉奈、進化の頂🧬"};
+function comboPhrase(n,key){
+  if(n>=100) return "莉奈、宇宙一🌌";
+  if(n>=75)  return "莉奈、ゴッド級⚡";
+  if(n>=50)  return "莉奈、レジェンド🏆";
+  if(n>=40)  return "莉奈は天才👑";
+  if(n>=30)  return "莉奈、覚醒モード🔥";
+  if(n>=25)  return "莉奈、止まらない🚀";
+  if(n>=20) return CLIMAX[key]||"莉奈は伝説級👑";
+  if(n>=15) return "莉奈、神ってる✨";
+  if(n>=10) return "莉奈、無双モード⚡";
+  if(n>=7)  return "さすが莉奈！";
+  if(n>=5)  return "莉奈ファイヤー🔥";
+  if(n>=3)  return "いいぞ莉奈！";
+  return "ナイス莉奈！";
+}
+function comboLevel(n){ return n>=25?"hot5":n>=15?"hot4":n>=10?"hot3":n>=5?"hot2":"hot1"; }
+
+// 全画面お祝い＋紙吹雪
+function confettiBurst(host){
+  const colors=["#caa54b","#2f6b4f","#b4502a","#6a4d9c","#1f7a6b","#e07b39","#3a5a8c","#e0492a"];
+  for(let i=0;i<100;i++){
+    const c=document.createElement('div'); c.className='confetti';
+    c.style.left=Math.random()*100+'%';
+    c.style.background=colors[i%colors.length];
+    if(Math.random()<.5) c.style.borderRadius='50%';
+    const dur=2.4+Math.random()*2.4, delay=Math.random()*1.4;
+    c.style.animation='fall '+dur+'s linear '+delay+'s forwards';
+    host.appendChild(c);
+  }
+}
+function celebrate(){
+  const ov=document.getElementById('celebrate');
+  const last=S.stages[S.stages.length-1];
+  ov.querySelector('.bigEmoji').textContent=last.emoji;
+  ov.querySelector('h2').textContent="🎉 莉奈、ぜんぶ覚えた！ 🎉";
+  ov.querySelector('p').innerHTML=S.icon+" "+S.name+" マスター達成！<br>「"+last.name+"」に しんか した！";
+  ov.querySelectorAll('.confetti').forEach(e=>e.remove());
+  confettiBurst(ov);
+  ov.classList.add('on');
+}
+
+function applyTheme(t){
+  const r=document.documentElement.style;
+  ["paper","main","mainD","gold","line","good","again","petA","petB"].forEach(k=>r.setProperty('--'+k,t[k]));
+}
+function save(){ try{ localStorage.setItem(S.key, JSON.stringify(data)); }catch(e){}
+  if(window.__SYNC__ && window.__SYNC__.enabled && window.__SYNC__.push){ try{ window.__SYNC__.push(collectAll()); }catch(e){} } }
+function pool(){ return S.cards.filter(c=> filter==="all" || c.group===filter); }
 function rankOf(id){ const s=data.srs[id]; return (s&&s.rank!=null)? s.rank : -1; }
-
 function schedule(id, ok){
-  let r=rankOf(id);
-  r = ok ? Math.min(STEPS.length-1,(r<0?0:r)+1) : 0;
-  data.srs[id]={rank:r};
-  const N=STEPS[r];
+  let r=rankOf(id); r = ok ? Math.min(STEPS.length-1,(r<0?0:r)+1) : 0;
+  data.srs[id]={rank:r}; const N=STEPS[r];
   return tick + Math.max(2, Math.round(N*(0.6+Math.random()*0.4)));
 }
 
-function stageFor(pts){ let i=0; for(let k=0;k<STAGES.length;k++){ if(pts>=STAGES[k].pt) i=k; } return i; }
+function enterSubject(key){
+  S=SUBJECTS[key]; curKey=key; applyTheme(S.theme);
+  data=readData(S.key); filter="all";
+  document.getElementById('ghead').innerHTML="<span>"+S.icon+"</span> "+S.name;
+  // チップ生成
+  const seg=document.getElementById('seg'); seg.innerHTML="";
+  S.filters.forEach((f,i)=>{ const b=document.createElement('button');
+    b.className="chip"+(i===0?" on":""); b.textContent=f[0]; b.dataset.f=f[1];
+    b.onclick=()=>{ seg.querySelectorAll('.chip').forEach(x=>x.classList.remove('on')); b.classList.add('on'); filter=f[1]; showing="q"; rebuild(); };
+    seg.appendChild(b); });
+  document.getElementById('home').style.display="none";
+  document.getElementById('game').classList.add('on');
+  showing="q"; rebuild();
+}
+function goHome(){
+  document.getElementById('game').classList.remove('on');
+  document.documentElement.style.cssText="";  // テーマを既定へ
+  document.getElementById('home').style.display="flex";
+  renderHome();
+}
 
 function rebuild(){
-  tick=0; queue=[]; combo=0; session={done:0};
+  tick=0; queue=[]; combo=0;
+  if(!document.getElementById('card')) restoreMain();
   const ps=pool();
   const fresh=ps.filter(c=>rankOf(c.id)<0), seen=ps.filter(c=>rankOf(c.id)>=0);
   shuffle(fresh); shuffle(seen);
@@ -194,9 +333,10 @@ function rebuild(){
   render();
 }
 function nextCard(){ if(!queue.length)return null; queue.sort((a,b)=>a.due-b.due); return queue[0]; }
-function byId(id){ return ALL.find(c=>c.id===id); }
+function byId(id){ return S.cards.find(c=>c.id===id); }
 
-const CARDHTML = document.getElementById('main').innerHTML;
+const MAINHTML = document.getElementById('main').innerHTML;
+function restoreMain(){ document.getElementById('main').innerHTML=MAINHTML; bindCard(); }
 function bindCard(){
   document.getElementById('card').addEventListener('click',()=>{ if(showing==="q") reveal(); });
   document.getElementById('card').addEventListener('keydown',e=>{ if(e.key===" "||e.key==="Enter"){e.preventDefault(); showing==="q"?reveal():judge(true);} });
@@ -206,124 +346,156 @@ function bindCard(){
 }
 
 function renderPet(){
-  const idx=stageFor(data.points); const st=STAGES[idx];
+  const idx=stageIdx(S.stages,data.points); const st=S.stages[idx];
   document.getElementById('avatar').textContent=st.emoji;
   document.getElementById('pname').textContent=st.name;
   document.getElementById('pword').textContent=st.word;
-  const next=STAGES[idx+1];
+  const next=S.stages[idx+1];
   const eb=document.getElementById('evobar'), en=document.getElementById('evonext');
-  if(next){ const span=next.pt-st.pt; const cur=data.points-st.pt;
+  if(next){ const span=next.pt-st.pt, cur=data.points-st.pt;
     eb.style.width=Math.max(0,Math.min(100,cur/span*100))+"%";
-    en.textContent="つぎの しんかまで あと "+(next.pt-data.points)+" ポイント"; }
-  else { eb.style.width="100%"; en.textContent="さいだい しんか！ でんせつたっせい"; }
+    en.textContent="つぎまで あと "+(next.pt-data.points)+" ポイント"; }
+  else { eb.style.width="100%"; en.textContent="さいだい とうたつ！"; }
 }
 function renderMaster(){
-  const ps=pool();
-  const mastered=ps.filter(c=>rankOf(c.id)>=MASTER_RANK).length;
-  const left=ps.length-mastered;
+  const ps=pool(); const mastered=ps.filter(c=>rankOf(c.id)>=MASTER_RANK).length;
+  document.getElementById('left').textContent=ps.length-mastered;
   const pct=ps.length? Math.round(mastered/ps.length*100):0;
-  document.getElementById('left').textContent=left;
   document.getElementById('mpct').textContent=pct;
   document.getElementById('mbar').style.width=pct+"%";
 }
 function render(){
-  if(!document.getElementById('card')){ document.getElementById('main').innerHTML=CARDHTML; bindCard(); }
+  if(!document.getElementById('card')) restoreMain();
   document.getElementById('pts').textContent=data.points;
   renderPet(); renderMaster();
-  const nx=nextCard();
-  if(!nx){ done(); return; }
+  const nx=nextCard(); if(!nx){ done(); return; }
   curId=nx.id; const c=byId(curId);
-  document.getElementById('cat').textContent=c.cat;
-  document.getElementById('cat').className="cat "+(c.cat==="アジア"?"aj":"jp");
+  const catEl=document.getElementById('cat');
+  catEl.textContent=c.badge;
+  const gc=S.groupColors[c.group]||{bg:"#eee",fg:"#555"};
+  catEl.style.background=gc.bg; catEl.style.color=gc.fg;
   const r=rankOf(curId);
   document.getElementById('rank').textContent = r<0?"NEW":(r>=MASTER_RANK?"覚えた Lv."+(r+1):"Lv."+(r+1));
   const combEl=document.getElementById('combo');
-  if(combo>=2){ combEl.classList.remove('hidden'); combEl.textContent="🔥 "+combo+" れんぞく！"; }
-  else combEl.classList.add('hidden');
+  if(combo>=2){ combEl.className="combo "+comboLevel(combo); combEl.innerHTML="🔥 "+combo+" <b>"+comboPhrase(combo,curKey)+"</b>"; }
+  else combEl.className="combo hidden";
+  document.getElementById('qtext').textContent=c.q;
+  document.getElementById('atext').textContent=c.a;
+  const adiv=document.getElementById('adiv');
   if(showing==="q"){
-    document.getElementById('face').textContent="とい";
-    const t=document.getElementById('text'); t.textContent=c.q; t.className="qtext";
+    document.getElementById('qtext').className="qtext big";
+    adiv.classList.remove('show');
     document.getElementById('hint').style.display="block";
     document.getElementById('revealWrap').style.display="block";
     document.getElementById('judgeWrap').style.display="none";
   }else{
-    document.getElementById('face').textContent="こたえ";
-    const t=document.getElementById('text'); t.textContent=c.a; t.className="atext";
+    document.getElementById('qtext').className="qtext small";
+    adiv.classList.add('show');
     document.getElementById('hint').style.display="none";
     document.getElementById('revealWrap').style.display="none";
     document.getElementById('judgeWrap').style.display="flex";
   }
 }
 function reveal(){ showing="a"; render(); }
-
-function floatShow(txt, cls){
-  const f=document.getElementById('float'); f.textContent=txt; f.className="float "+cls;
-  void f.offsetWidth; f.classList.add('go');
-  setTimeout(()=>{ f.className="float"; }, 1000);
-}
-function toast(html){
-  const t=document.getElementById('toast'); t.innerHTML=html; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show');
-}
+function floatShow(txt,cls){ const f=document.getElementById('float'); f.textContent=txt; f.className="float "+cls; void f.offsetWidth; f.classList.add('go'); setTimeout(()=>{f.className="float";},1000); }
+function toast(html){ const t=document.getElementById('toast'); t.innerHTML=html; t.classList.remove('show'); void t.offsetWidth; t.classList.add('show'); }
 
 function judge(ok){
-  const id=curId; const beforeStage=stageFor(data.points);
+  const id=curId; const before=stageIdx(S.stages,data.points);
+  const beforeM = pool().filter(c=>rankOf(c.id)>=MASTER_RANK).length;
   queue=queue.filter(q=>q.id!==id);
-  const due=schedule(id, ok); queue.push({id,due});
-
+  const due=schedule(id,ok); queue.push({id,due});
   if(ok){
-    data.points += 1; combo += 1;
-    let bonus=0;
+    data.points+=1; combo+=1; let bonus=0;
     if(combo%10===0) bonus+=5; else if(combo%5===0) bonus+=3;
-    data.points += bonus;
-    if(combo>data.maxCombo) data.maxCombo=combo;
-    if(bonus){ floatShow("+"+(1+bonus),"bonus"); toast('<span class="big">🔥</span>'+combo+'れんぞく ボーナス +'+bonus+'！'); }
+    data.points+=bonus; if(combo>data.maxCombo) data.maxCombo=combo;
+    if(bonus){ floatShow("+"+(1+bonus),"bonus"); toast('<span class="big">🔥</span><b>'+comboPhrase(combo,curKey)+'</b><br>'+combo+'れんぞく ＋'+bonus+'！'); }
     else floatShow("+1","plus");
-  }else{
-    data.points=Math.max(0,data.points-1); combo=0;
-    floatShow("-1","minus");
-  }
-  session.done++; showing="q"; tick++;
-
-  const afterStage=stageFor(data.points);
-  if(afterStage>beforeStage){
-    const st=STAGES[afterStage];
+  }else{ data.points=Math.max(0,data.points-1); combo=0; floatShow("-1","minus"); }
+  showing="q"; tick++;
+  const after=stageIdx(S.stages,data.points);
+  if(after>before){ const st=S.stages[after];
     document.getElementById('pet').classList.add('evolve');
-    setTimeout(()=>document.getElementById('pet').classList.remove('evolve'),900);
-    toast('<span class="big">'+st.emoji+'</span>しんか！「'+st.name+'」になった！');
-  }
-  // 全問マスター判定
+    setTimeout(()=>document.getElementById('pet').classList.remove('evolve'),1000);
+    toast('<span class="big">'+st.emoji+'</span>「'+st.name+'」に なった！'); }
   const ps=pool(); const mastered=ps.filter(c=>rankOf(c.id)>=MASTER_RANK).length;
   save();
-  if(mastered===ps.length && ps.length>0 && ok && afterStage<=beforeStage){
-    toast('<span class="big">🎉</span>このはんい ぜんぶ覚えた！');
-  }
+  if(mastered===ps.length && ps.length>0 && beforeM<ps.length){ celebrate(); }
   render();
 }
-
 function done(){
-  const idx=stageFor(data.points); const st=STAGES[idx];
+  const idx=stageIdx(S.stages,data.points); const st=S.stages[idx];
   document.getElementById('main').innerHTML=
-    '<div class="done"><div class="hero">'+st.emoji+'</div>'+
-    '<h2>このセット完了！</h2>'+
-    '<p>いまの あいぼう：<b>'+st.name+'</b><br>ポイント '+data.points+' ／ さいこうコンボ '+data.maxCombo+'<br><br>'+
-    'まちがえたカードは早めに、できたカードはだんだん間をあけて出てくるよ。<br>「ぜんぶ覚えた」まで つづけよう！</p>'+
+    '<div class="done"><div class="hero">'+st.emoji+'</div><h2>このセット完了！</h2>'+
+    '<p>いまの きみ：<b>'+st.name+'</b><br>ポイント '+data.points+' ／ さいこうコンボ '+data.maxCombo+'<br><br>'+
+    'まちがえたカードは早めに、できたカードはだんだん間をあけて出てくるよ。</p>'+
     '<button class="btn big" id="againAll" style="max-width:320px;margin-top:10px;">もう一周する</button></div>';
   document.getElementById('againAll').onclick=rebuild;
 }
 
-function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}return a;}
-
-bindCard();
-document.querySelectorAll('.chip').forEach(ch=>ch.onclick=()=>{
-  document.querySelectorAll('.chip').forEach(x=>x.classList.remove('on'));
-  ch.classList.add('on'); filter=ch.dataset.f; showing="q"; rebuild();
-});
+document.getElementById('back').onclick=goHome;
+document.getElementById('celebrate').onclick=function(){ this.classList.remove('on'); this.querySelectorAll('.confetti').forEach(e=>e.remove()); };
 document.getElementById('restart').onclick=()=>{
-  if(confirm("覚えた記録・ポイント・キャラを ぜんぶ消して 最初からにする？")){
-    data={srs:{},points:0,maxCombo:0,stageIdx:0}; save(); showing="q"; rebuild();
+  if(confirm(S.name+" の 記録・ポイント・キャラを ぜんぶ消して 最初からにする？")){
+    data={srs:{},points:0,maxCombo:0}; save(); showing="q"; rebuild();
   }
 };
-rebuild();
+// ===== クラウド同期（Firebase設定があれば有効） =====
+const SUBJECT_KEYS = Object.values(SUBJECTS).map(s=>s.key);
+function collectAll(){ const o={}; SUBJECT_KEYS.forEach(k=>{ const v=localStorage.getItem(k); if(v){ try{o[k]=JSON.parse(v);}catch(e){} } }); return o; }
+window.__onCloud__ = function(d){
+  let changed=false;
+  SUBJECT_KEYS.forEach(k=>{ if(d && d[k]!=null){ const incoming=JSON.stringify(d[k]);
+    if(localStorage.getItem(k)!==incoming){ try{ localStorage.setItem(k,incoming); changed=true; }catch(e){} } } });
+  if(changed){
+    if(document.getElementById('home').style.display!=="none"){ renderHome(); }
+    else if(S){ data=readData(S.key); renderPet(); renderMaster(); document.getElementById('pts').textContent=data.points; }
+  }
+};
+function syncBadge(){
+  const on = !!(window.__SYNC__ && window.__SYNC__.enabled);
+  const el=document.getElementById('syncDot'); if(el){ el.textContent = on ? "☁︎ 同期オン" : "📱 この端末のみ"; el.style.color = on ? "var(--main)" : "#9a9e96"; }
+}
+window.__syncReady__ = syncBadge;
+
+bindCard();
+renderHome();
+setTimeout(syncBadge, 1500);
 </script>
+
+<!-- ▼▼▼ クラウド同期（Firebase）設定 ▼▼▼
+     下の firebaseConfig に、自分の Firebase プロジェクトの設定を貼ると、
+     何台の端末でも進捗が自動で同期されます。
+     空のままなら、その端末だけにデータが保存されます（同期オフ）。 -->
+<script type="module">
+  const firebaseConfig = {
+    apiKey: "",
+    authDomain: "",
+    projectId: "",
+    storageBucket: "",
+    messagingSenderId: "",
+    appId: ""
+  };
+  const DOC_PATH = ["study", "rina"];   // 莉奈さん専用の保存場所（変更不要）
+  window.__SYNC__ = { enabled:false };
+  if(firebaseConfig.projectId){
+    try{
+      const { initializeApp } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js");
+      const { getFirestore, doc, setDoc, onSnapshot } = await import("https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js");
+      const app = initializeApp(firebaseConfig);
+      const db = getFirestore(app);
+      const ref = doc(db, DOC_PATH[0], DOC_PATH[1]);
+      let pushTimer=null;
+      window.__SYNC__.enabled = true;
+      window.__SYNC__.push = (allData)=>{
+        clearTimeout(pushTimer);
+        pushTimer = setTimeout(async ()=>{ try{ await setDoc(ref, {...allData, updatedAt: Date.now()}, {merge:true}); }catch(e){ console.warn("push fail", e); } }, 600);
+      };
+      onSnapshot(ref, (snap)=>{ if(snap.exists() && window.__onCloud__) window.__onCloud__(snap.data()); }, (err)=>console.warn("sync err", err));
+      if(window.__syncReady__) window.__syncReady__();
+    }catch(e){ console.warn("sync init failed", e); window.__SYNC__.enabled=false; }
+  }
+</script>
+<!-- ▲▲▲ クラウド同期 設定ここまで ▲▲▲ -->
 </body>
 </html>
